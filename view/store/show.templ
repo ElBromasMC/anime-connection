@@ -11,10 +11,13 @@ templ Show(cats []store.Category, slug string, items []store.Item) {
 		<main class="min-h-[calc(100dvh-16rem)]">
 			<div class="flex flex-col gap-16 px-4 py-16 max-w-7xl mx-auto lg:flex-row lg:py-24">
 				<!-- Store navigation -->
-				<div class="self-center w-48 rounded-2xl overflow-hidden bg-navy lg:self-start">
-					<div class="p-4">
+				<div class="self-center w-64 space-y-6 lg:self-start">
+					<div class="font-bold text-2xl text-navy text-center">
+						Completa tu colección!
+					</div>
+					<div>
 						<input
-							class="block px-2 py-1 w-full border border-navy rounded-xl text-sm bg-chalky text-livid"
+							class="block px-2 py-2 w-full border border-navy rounded-xl bg-chalky text-livid"
 							autocomplete="off"
 							type="search"
 							name="like"
@@ -24,26 +27,23 @@ templ Show(cats []store.Category, slug string, items []store.Item) {
 							hx-target="#store-items"
 						/>
 					</div>
-					<ul class="text-center font-bold text-lg text-chalky">
-						<li>
+					<ul class="text-center font-bold text-lg text-chalky space-y-6">
+						<li class="rounded-full overflow-hidden">
 							if slug == "all" {
-								<a class="block py-2 bg-sky-300">Todo</a>
+								<a class="block py-2 bg-amber-500">Todo</a>
 							} else {
-								<a class="block py-2 hover:bg-sky-300" href="/store/categories/all">Todo</a>
+								<a class="block py-2 bg-amber-300 hover:bg-amber-500 hover:text-chalky text-amber-500" href="/store/categories/all">Todo</a>
 							}
 						</li>
 						for _, c := range cats {
-							<li>
+							<li class="rounded-full overflow-hidden">
 								if slug == c.Slug {
-									<a class="block py-2 bg-sky-300">{ c.Name }</a>
+									<a class="block py-2 bg-amber-500">{ c.Name }</a>
 								} else {
-									<a class="block py-2 hover:bg-sky-300" href={ templ.URL(path.Join("/store/categories", c.Slug)) }>{ c.Name }</a>
+									<a class="block py-2 bg-amber-300 hover:bg-amber-500 hover:text-chalky text-amber-500" href={ templ.URL(path.Join("/store/categories", c.Slug)) }>{ c.Name }</a>
 								}
 							</li>
 						}
-						<li>
-							<a class="block py-2 hover:bg-sky-300" href="/garantia">Garantías</a>
-						</li>
 					</ul>
 				</div>
 				<!-- Store items -->

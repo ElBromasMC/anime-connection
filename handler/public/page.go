@@ -11,7 +11,3 @@ import (
 func (h *Handler) HandleIndexShow(c echo.Context) error {
 	return util.Render(c, http.StatusOK, page.Index())
 }
-
-func (h *Handler) HandleTicketShow(c echo.Context) error {
-	return util.Render(c, http.StatusOK, page.Ticket())
-}

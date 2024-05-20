@@ -2,6 +2,7 @@ package service
 
 import (
 	"alc/config"
+	"alc/model/auth"
 	"alc/model/store"
 	"context"
 	"io"
@@ -109,7 +110,7 @@ WHERE id = $1`, id); err != nil {
 
 // Item management
 
-func (as Admin) InsertItem(item store.Item) (int, error) {
+func (as Admin) InsertItem(user auth.User, item store.Item) (int, error) {
 	var imgId *int
 	if item.Img.Id != 0 {
 		imgId = &item.Img.Id
@@ -122,9 +123,9 @@ func (as Admin) InsertItem(item store.Item) (int, error) {
 
 	// Insert new item
 	var id int
-	if err := as.DB.QueryRow(context.Background(), `INSERT INTO store_items (category_id, name, description, long_description, img_id, largeimg_id, slug)
-VALUES ($1, $2, $3, $4, $5, $6, $7)
-RETURNING id`, item.Category.Id, item.Name, item.Description, item.LongDescription, imgId, largeimgId, item.Slug).Scan(&id); err != nil {
+	if err := as.DB.QueryRow(context.Background(), `INSERT INTO store_items (category_id, name, description, long_description, img_id, largeimg_id, slug, created_by)
+VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+RETURNING id`, item.Category.Id, item.Name, item.Description, item.LongDescription, imgId, largeimgId, item.Slug, user.Id).Scan(&id); err != nil {
 		return 0, echo.NewHTTPError(http.StatusInternalServerError, "Error inserting new item into database")
 	}
 	return id, nil

@@ -1,28 +1,24 @@
 package layout
 
 templ Footer() {
-	<footer class="bg-navy text-chalky">
-		<div class="grid gap-y-6 px-4 py-12 max-w-7xl mx-auto lg:grid-flow-col lg:py-16">
+	<footer class="bg-gray-50 text-black border-t border-gray-200">
+		<div class="grid gap-y-6 px-4 py-12 max-w-6xl mx-auto lg:grid-flow-col lg:py-16">
 			<!-- Links -->
-			<ul class="flex flex-col gap-1 items-center font-semibold text-azure [&_a:hover]:text-livid lg:flex-row lg:justify-between">
-				<li><a href="/#servicios">Servicios</a></li>
+			<ul class="flex flex-col gap-1 text-base items-center uppercase font-bold [&_a:hover]:text-gray-500 lg:flex-row lg:justify-between">
+				<li><a href="/store">Mangas</a></li>
 				<li><a href="/#nosotros">Nosotros</a></li>
-				<li><a href="/garantia">Venta de garantía extendida</a></li>
-				<li><a href="/store">Tienda</a></li>
-				<li><a href="/ticket">Consultar Ticket</a></li>
-				<li><a href="/#contacto">Contáctenos</a></li>
-				<li><a href="http://www.compucareperu.com/compu_data/fmr_libro.aspx?ent=CC" target="_blank">Libro de reclamaciones</a></li>
+				<li><a href="/#contacto">Contacto</a></li>
 			</ul>
 			<!-- Info -->
 			<p class="text-center font-semibold">
-				© 2024 TeamSupport | Av. Monte de los Olivos 993
+				© 2024 AnimeConnection
 				<br/>
-				Atención: Lunes a viernes de 9 am a 6 pm | Todos los derechos reservados | Hecho en Perú
+				Todos los derechos reservados | Hecho en Perú
 			</p>
 			<!-- Networks -->
 			<!-- Logo -->
 			<div class="flex justify-center items-center lg:row-span-2 lg:order-first lg:justify-start">
-				<img class="max-w-60" src="/static/img/logo2.webp" alt="logo"/>
+				<p class="relative top-1 font-bold font-mono text-2xl">AnimeConnection</p>
 			</div>
 		</div>
 	</footer>

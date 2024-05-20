@@ -2,6 +2,7 @@ package store
 
 import (
 	"alc/handler/util"
+	"alc/model/auth"
 	"alc/model/store"
 	"alc/view/admin/store/item"
 	"net/http"
@@ -78,8 +79,11 @@ func (h *Handler) HandleItemInsertion(c echo.Context) error {
 		i.LargeImg = newLargeImg
 	}
 
+	// Query user
+	user, _ := auth.GetUser(c.Request().Context())
+
 	// Insert it into database
-	if _, err := h.AdminService.InsertItem(i); err != nil {
+	if _, err := h.AdminService.InsertItem(user, i); err != nil {
 		return err
 	}
 

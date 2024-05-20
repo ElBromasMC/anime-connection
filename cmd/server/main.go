@@ -98,7 +98,6 @@ func main() {
 
 	// Page routes
 	e.GET("/", ph.HandleIndexShow, authMiddleware, cartMiddleware)
-	e.GET("/ticket", ph.HandleTicketShow, authMiddleware, cartMiddleware)
 
 	// Auth routes
 	e.GET("/login", ph.HandleLoginShow)
