@@ -1,0 +1,79 @@
+package item 
+
+import (
+	"path"
+	"alc/config"
+	"alc/model/store"
+	"alc/view/admin"
+)
+
+templ Table(cat store.Category, items []store.Item) {
+	<table class="table-auto w-full">
+		<thead>
+			<tr class="border-b border-black text-left">
+				<th scope="col">Nombre</th>
+				<th class="w-72" scope="col">Descripción</th>
+				<th scope="col">Miniatura</th>
+				if cat.Type == store.StoreType {
+					<th scope="col">Descripción larga</th>
+					<th scope="col">Imagen</th>
+				}
+				<th scope="col">Acciones</th>
+			</tr>
+		</thead>
+		<tbody>
+			for _, i := range items {
+				<tr class="border-b border-black">
+					<td>
+						<a
+							class="font-semibold text-azure"
+							href={ templ.URL(path.Join("/admin/tienda/type", i.Category.Type.ToSlug(), "categories", i.Category.Slug, "items", i.Slug, "products")) }
+						>
+							{ i.Name }
+						</a>
+					</td>
+					<td>{ i.Description }</td>
+					<td>
+						if i.Img.Id != 0 {
+							<button
+								class="block font-semibold text-azure"
+								onclick={ admin.HandleImageShow(i.Img.Filename, path.Join(config.IMAGES_PATH, i.Img.Filename)) }
+							>{ i.Img.Filename }</button>
+						} else {
+							<span>No image</span>
+						}
+					</td>
+					if cat.Type == store.StoreType {
+						<td>{ i.LongDescription }</td>
+						<td>
+							if i.LargeImg.Id != 0 {
+								<button
+									class="block font-semibold text-azure"
+									onclick={ admin.HandleImageShow(i.LargeImg.Filename, path.Join(config.IMAGES_PATH, i.LargeImg.Filename)) }
+								>{ i.LargeImg.Filename }</button>
+							} else {
+								<span>No image</span>
+							}
+						</td>
+					}
+					<td>
+						<button
+							class="block font-semibold text-azure"
+							hx-get={ path.Join("/admin/tienda/type", i.Category.Type.ToSlug(), "categories", i.Category.Slug, "items", i.Slug, "update") }
+							hx-target="#update-item-form"
+						>
+							Editar
+						</button>
+						<button
+							class="block font-semibold text-azure"
+							hx-get={ path.Join("/admin/tienda/type", i.Category.Type.ToSlug(), "categories", i.Category.Slug, "items", i.Slug, "delete") }
+							hx-target="#delete-item-form"
+						>
+							Borrar
+						</button>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}

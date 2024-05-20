@@ -1,0 +1,53 @@
+package device
+
+import (
+	"time"
+	"alc/model/store"
+	"path"
+	"fmt"
+)
+
+func GetTime(t time.Time) string {
+	loc, _ := time.LoadLocation("America/Lima")
+	locTime := t.In(loc)
+	return locTime.Format(time.DateTime)
+}
+
+templ Table(devices []store.Device) {
+	<table class="table-auto w-full">
+		<thead>
+			<tr class="border-b border-black text-left">
+				<th scope="col">Serie</th>
+				<th scope="col">Creado el</th>
+				<th scope="col">Actualizado el</th>
+				<th scope="col">Acciones</th>
+			</tr>
+		</thead>
+		<tbody>
+			for _, device := range devices {
+				<tr class="border-b border-black">
+					<td>{ device.Serie }</td>
+					<td>{ GetTime(device.CreatedAt) }</td>
+					<td>{ GetTime(device.UpdatedAt) }</td>
+					<td>
+						<!-- Control buttons -->
+						<button
+							class="block font-semibold text-azure"
+							hx-get={ string(templ.URL(path.Join("/admin/dispositivos", fmt.Sprintf("%d", device.Id), "history"))) }
+							hx-target="#item-history"
+						>
+							Ver historial
+						</button>
+						<button
+							class="block font-semibold text-azure"
+							hx-get={ string(templ.URL(path.Join("/admin/dispositivos", fmt.Sprintf("%d", device.Id), "desactivate"))) }
+							hx-target="#desactivate-item-form"
+						>
+							Desactivar
+						</button>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}

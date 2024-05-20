@@ -1,0 +1,53 @@
+package device
+
+import (
+	"alc/model/store"
+	"path"
+	"fmt"
+)
+
+templ InsertionForm() {
+	<form
+		class="space-y-2"
+		enctype="multipart/form-data"
+		autocomplete="off"
+		hx-post="/admin/dispositivos"
+		hx-target="#table-items"
+		hx-encoding="multipart/form-data"
+		hx-on::after-request="this.reset();"
+		hx-target-error="find .insertion-error-message"
+		hx-indicator="#insertion-indicator"
+	>
+		<div class="insertion-error-message min-h-6"></div>
+		<div class="!mt-0">
+			<label>Serie:</label>
+			<input class="block w-full border border-livid" type="text" name="serial" required/>
+		</div>
+		<div class="flex gap-6 !mt-3">
+			<button class="font-bold text-azure" type="submit">Guardar</button>
+			<button class="font-bold text-azure" type="reset">Reiniciar</button>
+		</div>
+	</form>
+}
+
+templ DesactivationForm(device store.Device) {
+	<form
+		class="space-y-2"
+		enctype="multipart/form-data"
+		autocomplete="off"
+		hx-put={ string(templ.URL(path.Join("/admin/dispositivos", fmt.Sprintf("%d", device.Id), "desactivate"))) }
+		hx-target="#table-items"
+		hx-encoding="multipart/form-data"
+		hx-on::after-request="this.reset();"
+		hx-target-error="#desactivation-error-message"
+		hx-indicator="#desactivation-indicator"
+	>
+		<div>
+			<label>Serie:</label>
+			<input class="block w-full border border-livid" type="text" value={ device.Serie } disabled/>
+		</div>
+		<div class="flex gap-6 !mt-3">
+			<button class="font-bold text-azure" type="submit">Sí</button>
+		</div>
+	</form>
+}

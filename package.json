@@ -1,0 +1,15 @@
+{
+  "name": "alc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "esbuild": "^0.20.1",
+    "tailwindcss": "^3.4.1"
+  },
+  "devDependencies": {
+    "ws": "^8.16.0"
+  }
+}

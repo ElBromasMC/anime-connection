@@ -1,0 +1,106 @@
+package product 
+
+import (
+	"fmt"
+	"path"
+	"alc/model/store"
+)
+
+templ InsertionForm(item store.Item) {
+	<form
+		class="mt-3 space-y-2"
+		enctype="multipart/form-data"
+		autocomplete="off"
+		hx-post={ path.Join("/admin/tienda/type", item.Category.Type.ToSlug(), "categories", item.Category.Slug, "items", item.Slug, "products") }
+		hx-target="#table-items"
+		hx-encoding="multipart/form-data"
+		hx-on::after-request="this.reset();"
+	>
+		<div>
+			<label>Nombre:</label>
+			<input class="block w-full border border-livid" type="text" name="name" required/>
+		</div>
+		<div>
+			<label>Precio:</label>
+			<input class="block w-full border border-livid" placeholder="US$" type="number" min="0" step="0.01" name="price" required/>
+		</div>
+		if item.Category.Type == store.StoreType {
+			<div>
+				<label>Stock:</label>
+				<input class="block w-full border border-livid" type="number" min="1" name="stock" required/>
+			</div>
+		}
+		<div class="flex gap-6 !mt-3">
+			<button class="font-bold text-azure" type="submit">Guardar</button>
+			<button class="font-bold text-azure" type="reset">Reiniciar</button>
+		</div>
+	</form>
+}
+
+templ UpdateForm(product store.Product) {
+	<form
+		class="mt-3 space-y-2"
+		enctype="multipart/form-data"
+		autocomplete="off"
+		hx-put={ path.Join("/admin/tienda/type", product.Item.Category.Type.ToSlug(), "categories", product.Item.Category.Slug, "items", product.Item.Slug, "products", product.Slug) }
+		hx-target="#table-items"
+		hx-encoding="multipart/form-data"
+	>
+		<div>
+			<label>Nombre:</label>
+			<input class="block w-full border border-livid" type="text" name="name" value={ product.Name } required/>
+		</div>
+		<div>
+			<label>Precio:</label>
+			<input class="block w-full border border-livid" placeholder="US$" type="number" min="0" step="0.01" name="price" value={ fmt.Sprintf("%.2f", float64(product.Price)/100.0) } required/>
+		</div>
+		<div class="flex gap-6 !mt-3">
+			<button class="font-bold text-azure" type="submit">Actualizar</button>
+		</div>
+	</form>
+}
+
+templ DeletionForm(product store.Product) {
+	<form
+		class="mt-3 space-y-2"
+		enctype="multipart/form-data"
+		autocomplete="off"
+		hx-delete={ path.Join("/admin/tienda/type", product.Item.Category.Type.ToSlug(), "categories", product.Item.Category.Slug, "items", product.Item.Slug, "products", product.Slug) }
+		hx-target="#table-items"
+		hx-encoding="multipart/form-data"
+	>
+		<div>
+			<label>Nombre:</label>
+			<input class="block w-full border border-livid" type="text" value={ product.Name } disabled/>
+		</div>
+		<div class="flex gap-6 !mt-3">
+			<button class="font-bold text-azure" type="submit">Sí</button>
+		</div>
+	</form>
+}
+
+templ UpdateStockForm(product store.Product) {
+	<form
+		class="mt-3 space-y-2"
+		enctype="multipart/form-data"
+		autocomplete="off"
+		hx-put={ path.Join("/admin/tienda/type", product.Item.Category.Type.ToSlug(), "categories", product.Item.Category.Slug, "items", product.Item.Slug, "products", product.Slug, "stock") }
+		hx-target="#table-items"
+		hx-encoding="multipart/form-data"
+	>
+		<div>
+			<label>Opciones:</label>
+			<select class="block w-full border border-livid" name="option" required>
+				<option value="add">Añadir</option>
+				<option value="subtract">Quitar</option>
+			</select>
+		</div>
+		<div>
+			<label>En:</label>
+			<input class="block w-full border border-livid" type="number" min="1" name="value" required/>
+		</div>
+		<div class="flex gap-6 !mt-3">
+			<button class="font-bold text-azure" type="submit">Actualizar</button>
+		</div>
+	</form>
+}

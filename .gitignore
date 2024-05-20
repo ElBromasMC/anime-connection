@@ -1,0 +1,18 @@
+*.test
+go.work
+
+# Heaviest thing on earth
+node_modules
+
+# Dotenv file
+.env
+
+# Images store
+images
+
+# Build artifacts
+build
+tmp
+assets/static/css/tailwind.css
+assets/static/js/main.js
+view/**/*_templ.go

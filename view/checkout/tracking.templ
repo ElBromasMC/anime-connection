@@ -1,0 +1,126 @@
+package checkout
+
+import (
+	"fmt"
+	"time"
+	"alc/model/checkout"
+	"alc/view/layout"
+)
+
+func GetTime(t time.Time) string {
+	loc, _ := time.LoadLocation("America/Lima")
+	locTime := t.In(loc)
+	return locTime.Format(time.DateTime)
+}
+
+func TotalProductPrice(products []checkout.OrderProduct) int {
+	total := 0
+	for _, p := range products {
+		total += p.ProductPrice * p.Quantity
+	}
+	return total
+}
+
+templ Tracking(order checkout.Order, products []checkout.OrderProduct) {
+	@layout.Base(fmt.Sprintf("%d", order.PurchaseOrder)) {
+		<main class="flex items-center py-12 min-h-dvh bg-sky-100 sm:px-12">
+			<article class="grid gap-6 px-4 py-12 mx-auto w-full max-w-7xl bg-white lg:grid-cols-2 lg:gap-x-12 lg:px-9">
+				<h1 class="text-4xl font-semibold lg:col-span-2">Seguimiento</h1>
+				<div class="space-y-6">
+					<!-- Order information -->
+					<section>
+						<h2 class="text-2xl font-bold">Información de la orden</h2>
+						<ul class="list-disc list-inside text-xl">
+							<li>
+								<span class="font-bold">Número de orden:</span>
+								<span>{ fmt.Sprintf("%d", order.PurchaseOrder) }</span>
+							</li>
+							<li>
+								<span class="font-bold">Creado el:</span>
+								switch Formatted := GetTime(order.CreatedAt); 0 {
+									default:
+										<time datetime={ Formatted }>{ Formatted }</time>
+								}
+							</li>
+						</ul>
+					</section>
+					<!-- User information -->
+					<section>
+						<h2 class="text-2xl font-bold">Información del usuario</h2>
+						<ul class="list-disc list-inside text-xl">
+							<li>
+								<span class="font-bold">Email:</span>
+								<span>{ order.Email }</span>
+							</li>
+						</ul>
+					</section>
+					<!-- Customer service -->
+					<section>
+						<h2 class="text-2xl font-bold">Servicio al cliente</h2>
+						<ul class="text-xl">
+							<li>
+								<a class="text-azure hover:text-livid" href="mailto:ventas@teamsupportperu.com">
+									<svg class="inline w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+										<path d="M2 5.6V18c0 1.1.9 2 2 2h16a2 2 0 0 0 2-2V5.6l-.9.7-7.9 6a2 2 0 0 1-2.4 0l-8-6-.8-.7Z"></path>
+										<path d="M20.7 4.1A2 2 0 0 0 20 4H4a2 2 0 0 0-.6.1l.7.6 7.9 6 7.9-6 .8-.6Z"></path>
+									</svg>
+									ventas@teamsupportperu.com
+								</a>
+							</li>
+						</ul>
+					</section>
+				</div>
+				<!-- Products information -->
+				<section>
+					<h2 class="text-2xl font-bold">Información del pedido</h2>
+					<ul class="space-y-3 mt-3">
+						for _, p := range products {
+							<li
+								class={
+									"p-2", "border-2",
+									templ.KV("border-livid", p.Status == checkout.Pendiente),
+									templ.KV("border-yellow-400", p.Status == checkout.EnProceso),
+									templ.KV("border-azure", p.Status == checkout.PorConfirmar),
+									templ.KV("border-green-600", p.Status == checkout.Entregado),
+									templ.KV("border-red-600", p.Status == checkout.Cancelado),
+								}
+							>
+								<h3 class="font-bold text-sm">
+									{ p.ProductCategory + " - " + p.ProductItem + " - " + p.ProductName }
+								</h3>
+								<div class="text-sm">
+									<span class="font-bold">Estado:</span>
+									<span>{ string(p.Status) }</span>
+								</div>
+								<div class="text-sm text-livid">
+									<span class="font-bold">Precio:</span>
+									<span>{ ToUSD(p.ProductPrice) }</span>
+								</div>
+								<div class="text-sm text-livid">
+									<span class="font-bold">Cantidad:</span>
+									<span>{ fmt.Sprintf("%d", p.Quantity) }</span>
+								</div>
+								for key, value := range p.Details {
+									<div class="text-sm text-livid">
+										<span class="font-bold">{ key + ":" }</span>
+										<span>{ value }</span>
+									</div>
+								}
+								<div class="text-sm text-navy">
+									<span class="font-bold">Subtotal:</span>
+									<span>{ ToUSD(p.ProductPrice * p.Quantity) }</span>
+								</div>
+							</li>
+						}
+					</ul>
+					<div class="mt-3">
+						<div class="flex justify-between text-2xl">
+							<span class="font-semibold">Total:</span>
+							<span>{ ToUSD(TotalProductPrice(products)) }</span>
+						</div>
+					</div>
+				</section>
+			</article>
+		</main>
+	}
+}

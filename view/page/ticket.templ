@@ -1,0 +1,26 @@
+package page 
+
+import (
+	"alc/view/layout"
+)
+
+templ Ticket() {
+	@layout.BasePage("Consultar ticket") {
+		<main>
+			<section class="relative h-[calc(100dvh-4rem)]">
+				<img class="relative object-cover w-full h-full" src="/static/img/ticket.jpg" alt=""/>
+				<div class="absolute inset-0 flex justify-center items-center px-4">
+					<div class="text-chalky">
+						<h2 class="mb-8 text-center text-3xl font-semibold lg:mb-16 lg:text-5xl">Consulta tu ticket</h2>
+						<div class="flex flex-col items-center gap-6 font-bold lg:flex-row lg:gap-16">
+							<a class="px-9 py-2 rounded-2xl bg-azure" href="http://portal.teamsupportperu.com/compu_data_client/consulta_ot.aspx" target="_blank">Cliente</a>
+							<a class="px-9 py-2 rounded-2xl bg-azure" href="http://portal.teamsupportperu.com/compu_data_client/login.aspx" target="_blank">Cliente corporativo</a>
+							<a class="px-9 py-2 rounded-2xl bg-azure" href="http://portal.teamsupportperu.com/compu_data/inicio_rep.aspx" target="_blank">Fabricante</a>
+							<a class="px-9 py-2 rounded-2xl bg-azure" href="http://portal.teamsupportperu.com/compu_data/marca.aspx" target="_blank">Intranet</a>
+						</div>
+					</div>
+				</div>
+			</section>
+		</main>
+	}
+}

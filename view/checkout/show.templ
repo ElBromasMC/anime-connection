@@ -1,0 +1,187 @@
+package checkout
+
+import (
+	"fmt"
+	"path"
+	"alc/config"
+	"alc/model/cart"
+	"alc/view/layout"
+)
+
+func ToUSD(value int) string {
+	return fmt.Sprintf("US$ %.2f", float64(value)/100.0)
+}
+
+func TotalProducts(items []cart.Item) int {
+	count := 0
+	for _, i := range items {
+		count += i.Quantity
+	}
+	return count
+}
+
+func TotalPrice(items []cart.Item) int {
+	total := 0
+	for _, i := range items {
+		total += i.Product.Price * i.Quantity
+	}
+	return total
+}
+
+templ Show(items []cart.Item) {
+	@layout.Base("Checkout") {
+		<main class="flex items-center py-12 min-h-dvh bg-sky-100 sm:px-12">
+			<section class="grid gap-6 px-4 py-12 mx-auto w-full max-w-7xl bg-white lg:grid-cols-2 lg:gap-x-12 lg:px-9">
+				<h1 class="text-4xl font-semibold lg:col-span-2">Checkout</h1>
+				<!-- Cart summary -->
+				<div class="lg:col-span-1">
+					<h2 class="font-bold text-2xl">
+						Resumen del pedido
+						<span>{ fmt.Sprintf("(%d)", TotalProducts(items)) }</span>
+					</h2>
+					<!-- Cart items -->
+					<ul class="space-y-3 mt-3">
+						for _, i := range items {
+							<li class="grid grid-cols-7 gap-x-3 p-2 border">
+								<div class="col-span-2">
+									if i.Product.Item.Img.Id != 0 {
+										<img
+											class="w-full aspect-square object-cover"
+											src={ path.Join(config.IMAGES_PATH, i.Product.Item.Img.Filename) }
+											alt={ i.Product.Item.Name }
+										/>
+									} else {
+										<img class="w-full aspect-square object-cover" src="/static/img/noimage.png" alt="No image"/>
+									}
+								</div>
+								<div class="flex flex-col justify-center col-span-5">
+									<h3 class="font-bold text-sm">{ i.Product.Item.Name + " - " + i.Product.Name }</h3>
+									<div class="text-sm text-livid">
+										<span class="font-bold">Precio:</span>
+										<span>{ ToUSD(i.Product.Price) }</span>
+									</div>
+									<div class="text-sm text-livid">
+										<span class="font-bold">Cantidad:</span>
+										<span>{ fmt.Sprintf("%d", i.Quantity) }</span>
+									</div>
+									for key, value := range i.Details {
+										<div class="text-sm text-livid">
+											<span class="font-bold">{ key + ":" }</span>
+											<span>{ value }</span>
+										</div>
+									}
+									<div class="text-sm text-navy">
+										<span class="font-bold">Subtotal:</span>
+										<span>{ ToUSD(i.Product.Price * i.Quantity) }</span>
+									</div>
+								</div>
+							</li>
+						}
+					</ul>
+					<div class="mt-3">
+						<div class="flex justify-between text-2xl">
+							<span class="font-semibold">Total:</span>
+							<span>{ ToUSD(TotalPrice(items)) }</span>
+						</div>
+					</div>
+				</div>
+				<hr class="border-gray-400 lg:hidden"/>
+				<!-- Checkout form -->
+				<div class="lg:col-span-1">
+					<form
+						class="space-y-4"
+						action="/checkout"
+						method="post"
+					>
+						<!-- Contact information -->
+						<div class="space-y-2">
+							<h2 class="font-bold text-3xl">Contacto</h2>
+							<div>
+								<label for="email">Correo electrónico:</label>
+								<input
+									id="email"
+									class="block p-2 w-full border rounded-md border-slate-500"
+									type="email"
+									placeholder="Correo electrónico"
+									name="email"
+									required
+								/>
+							</div>
+							<div>
+								<label for="phone">Teléfono:</label>
+								<input
+									id="phone"
+									class="block p-2 w-full border rounded-md border-slate-500"
+									type="tel"
+									placeholder="Teléfono"
+									name="phone"
+								/>
+							</div>
+						</div>
+						<!-- Billing information -->
+						<div class="space-y-2">
+							<h2 class="font-bold text-3xl">Dirección de facturación</h2>
+							<div>
+								<label for="billing-name">Nombre completo:</label>
+								<input
+									id="billing-name"
+									class="block p-2 w-full border rounded-md border-slate-500"
+									type="text"
+									placeholder="Nombre completo"
+									name="billing-name"
+									required
+								/>
+							</div>
+							<div>
+								<label for="billing-address">Dirección:</label>
+								<span class="font-semibold text-azure">(Solo disponible en Perú)</span>
+								<input
+									id="billing-address"
+									class="block p-2 w-full border rounded-md border-slate-500"
+									type="text"
+									placeholder="Dirección"
+									name="billing-address"
+									required
+								/>
+							</div>
+							<div class="grid grid-cols-2 gap-6">
+								<div>
+									<label for="billing-city">Ciudad:</label>
+									<input
+										id="billing-city"
+										class="block p-2 w-full border rounded-md border-slate-500"
+										type="text"
+										placeholder="Ciudad"
+										name="billing-city"
+										required
+									/>
+								</div>
+								<div>
+									<label for="billing-zip">Código postal:</label>
+									<input
+										id="billing-zip"
+										class="block p-2 w-full border rounded-md border-slate-500"
+										type="text"
+										placeholder="Código postal"
+										name="billing-zip"
+										required
+									/>
+								</div>
+							</div>
+						</div>
+						<!-- Payment information -->
+						<div class="space-y-2">
+							<h2 class="font-bold text-3xl">Pago</h2>
+							<p class="text-lg">Al completar el checkout se le contactará con uno de nuestros agentes</p>
+						</div>
+						<div>
+							<button class="w-full p-2 border bg-azure border-azure rounded-xl text-lg font-bold text-chalky" type="submit">
+								Siguiente
+							</button>
+						</div>
+					</form>
+				</div>
+			</section>
+		</main>
+	}
+}

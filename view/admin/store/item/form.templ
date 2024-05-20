@@ -1,0 +1,101 @@
+package item
+
+import (
+	"path"
+	"alc/model/store"
+)
+
+templ InsertionForm(cat store.Category) {
+	<form
+		class="mt-3 space-y-2"
+		enctype="multipart/form-data"
+		autocomplete="off"
+		hx-post={ path.Join("/admin/tienda/type", cat.Type.ToSlug(), "categories", cat.Slug, "items") }
+		hx-target="#table-items"
+		hx-encoding="multipart/form-data"
+		hx-on::after-request="this.reset();"
+	>
+		<div>
+			<label>Nombre:</label>
+			<input class="block w-full border border-livid" type="text" name="name" required/>
+		</div>
+		<div>
+			<label>Descripción:</label>
+			<input class="block w-full border border-livid" type="text" name="description"/>
+		</div>
+		<div>
+			<label>Miniatura:</label>
+			<input class="block" type="file" name="img" accept="image/png, image/jpeg, image/webp"/>
+		</div>
+		if cat.Type == store.StoreType {
+			<div>
+				<label>Descripción larga:</label>
+				<textarea class="block resize-none w-full h-36 border border-livid" name="longDescription"></textarea>
+			</div>
+			<div>
+				<label>Imagen:</label>
+				<input class="block" type="file" name="largeImg" accept="image/png, image/jpeg, image/webp"/>
+			</div>
+		}
+		<div class="flex gap-6 !mt-3">
+			<button class="font-bold text-azure" type="submit">Guardar</button>
+			<button class="font-bold text-azure" type="reset">Reiniciar</button>
+		</div>
+	</form>
+}
+
+templ UpdateForm(item store.Item) {
+	<form
+		class="mt-3 space-y-2"
+		enctype="multipart/form-data"
+		autocomplete="off"
+		hx-put={ path.Join("/admin/tienda/type", item.Category.Type.ToSlug(), "categories", item.Category.Slug, "items", item.Slug) }
+		hx-target="#table-items"
+		hx-encoding="multipart/form-data"
+	>
+		<div>
+			<label>Nombre:</label>
+			<input class="block w-full border border-livid" type="text" name="name" value={ item.Name } required/>
+		</div>
+		<div>
+			<label>Descripción:</label>
+			<input class="block w-full border border-livid" type="text" name="description" value={ item.Description }/>
+		</div>
+		<div>
+			<label>Miniatura:</label>
+			<input class="block" type="file" name="img" accept="image/png, image/jpeg, image/webp"/>
+		</div>
+		if item.Category.Type == store.StoreType {
+			<div>
+				<label>Descripción larga:</label>
+				<textarea class="block resize-none w-full h-36 border border-livid" name="longDescription">{ item.LongDescription }</textarea>
+			</div>
+			<div>
+				<label>Imagen:</label>
+				<input class="block" type="file" name="largeImg" accept="image/png, image/jpeg, image/webp"/>
+			</div>
+		}
+		<div class="flex gap-6 !mt-3">
+			<button class="font-bold text-azure" type="submit">Actualizar</button>
+		</div>
+	</form>
+}
+
+templ DeletionForm(item store.Item) {
+	<form
+		class="mt-3 space-y-2"
+		enctype="multipart/form-data"
+		autocomplete="off"
+		hx-delete={ path.Join("/admin/tienda/type", item.Category.Type.ToSlug(), "categories", item.Category.Slug, "items", item.Slug) }
+		hx-target="#table-items"
+		hx-encoding="multipart/form-data"
+	>
+		<div>
+			<label>Nombre:</label>
+			<input class="block w-full border border-livid" type="text" value={ item.Name } disabled/>
+		</div>
+		<div class="flex gap-6 !mt-3">
+			<button class="font-bold text-azure" type="submit">Sí</button>
+		</div>
+	</form>
+}

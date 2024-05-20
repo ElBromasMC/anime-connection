@@ -1,0 +1,106 @@
+package product
+
+import (
+	"path"
+	"alc/model/store"
+	"alc/view/layout"
+	"alc/view/component"
+)
+
+templ Show(item store.Item, products []store.Product) {
+	@layout.BaseAdmin(item.Name) {
+		<!-- Dialogs -->
+		<div>
+			<!-- New item dialog -->
+			<dialog
+				class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0 p-6 w-[90%] max-w-lg border border-black bg-white"
+				hx-on::after-swap="this.showModal();"
+				hx-on::after-request="this.close();"
+			>
+				<form class="flex justify-between" method="dialog">
+					<h2 class="font-bold text-2xl">Nuevo producto</h2>
+					<button class="font-bold text-azure" type="submit">Salir</button>
+				</form>
+				<div id="insert-item-form"></div>
+			</dialog>
+			<!-- Update item dialog -->
+			<dialog
+				class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0 p-6 w-[90%] max-w-lg border border-black bg-white"
+				hx-on::after-swap="this.showModal();"
+				hx-on::after-request="this.close();"
+			>
+				<form class="flex justify-between" method="dialog">
+					<h2 class="font-bold text-2xl">Editar producto</h2>
+					<button class="font-bold text-azure" type="submit">Salir</button>
+				</form>
+				<div id="update-item-form"></div>
+			</dialog>
+			<!-- Delete item dialog -->
+			<dialog
+				class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0 p-6 w-[90%] max-w-lg border border-black bg-white"
+				hx-on::after-swap="this.showModal();"
+				hx-on::after-request="this.close();"
+			>
+				<form class="flex justify-between" method="dialog">
+					<h2 class="font-bold text-2xl">¿Estás seguro?</h2>
+					<button class="font-bold text-azure" type="submit">Salir</button>
+				</form>
+				<div id="delete-item-form"></div>
+			</dialog>
+			<!-- Update stock dialog -->
+			<dialog
+				class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0 p-6 w-[90%] max-w-lg border border-black bg-white"
+				hx-on::after-swap="this.showModal();"
+				hx-on::after-request="this.close();"
+			>
+				<form class="flex justify-between" method="dialog">
+					<h2 class="font-bold text-2xl">Actualizar stock</h2>
+					<button class="font-bold text-azure" type="submit">Salir</button>
+				</form>
+				<div id="update-stock-form"></div>
+			</dialog>
+		</div>
+		<main>
+			<!-- Navigation -->
+			<div>
+				<span class="font-semibold text-azure"><a href="/admin">Administración</a></span>
+				@component.IconRight()
+				<span class="font-semibold text-azure"><a href="/admin/tienda">Tienda</a></span>
+				@component.IconRight()
+				<span class="font-semibold text-azure">
+					<a href={ templ.URL(path.Join("/admin/tienda/type", item.Category.Type.ToSlug(), "categories")) }>{ type2Title(item.Category.Type) }</a>
+				</span>
+				@component.IconRight()
+				<span class="font-semibold text-azure">
+					<a href={ templ.URL(path.Join("/admin/tienda/type", item.Category.Type.ToSlug(), "categories", item.Category.Slug, "items")) }>{ item.Category.Name }</a>
+				</span>
+				@component.IconRight()
+				<span class="text-livid">{ item.Name }</span>
+			</div>
+			<!-- Title -->
+			<h1 class="mt-3 font-bold text-3xl">Productos</h1>
+			<!-- Control buttons -->
+			<div>
+				<button
+					class="font-semibold text-azure"
+					hx-get={ path.Join("/admin/tienda/type", item.Category.Type.ToSlug(), "categories", item.Category.Slug, "items", item.Slug, "products/insert") }
+					hx-target="#insert-item-form"
+				>
+					Nuevo producto
+				</button>
+			</div>
+			<!-- Items show table -->
+			<div id="table-items">
+				@Table(item, products)
+			</div>
+		</main>
+	}
+}
+
+func type2Title(t store.Type) string {
+	if t == store.GarantiaType {
+		return "Garantías"
+	} else {
+		return "Tienda"
+	}
+}

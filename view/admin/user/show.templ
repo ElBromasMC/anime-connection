@@ -1,0 +1,26 @@
+package user
+
+import (
+	"alc/view/layout"
+	"alc/view/component"
+)
+
+templ Show() {
+	@layout.BaseAdmin("Usuarios") {
+		<main>
+			<!-- Navigation -->
+			<div>
+				<span class="font-semibold text-azure"><a href="/admin">Administración</a></span>
+				@component.IconRight()
+				<span class="text-livid">Usuarios</span>
+			</div>
+			<!-- Title -->
+			<h1 class="mt-3 font-bold text-3xl">Usuarios</h1>
+			<ul class="mt-6 space-y-2">
+				<li>
+					<a class="font-semibold text-azure" href="/admin/usuarios/role/recorder/users">Administradores de series</a>
+				</li>
+			</ul>
+		</main>
+	}
+}

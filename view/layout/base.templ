@@ -1,0 +1,73 @@
+package layout
+
+import (
+	"time"
+	"fmt"
+	"os"
+)
+
+templ Base(title string) {
+	<!DOCTYPE html>
+	<html class="scroll-smooth" lang="es">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>{ title }</title>
+			if os.Getenv("ENV") == "development" {
+				<!-- Live reload -->
+				<script src="/static/js/live-reload.js"></script>
+				<script src={ fmt.Sprintf("/static/js/main.js?v=%s", time.Now().Format("20060102150405")) } defer></script>
+				<link href={ fmt.Sprintf("/static/css/tailwind.css?v=%s", time.Now().Format("20060102150405")) } rel="stylesheet"/>
+			} else {
+				<script src={ fmt.Sprintf("/static/js/main.js?v=%s", os.Getenv("REL")) } defer></script>
+				<link href={ fmt.Sprintf("/static/css/tailwind.css?v=%s", os.Getenv("REL")) } rel="stylesheet"/>
+			}
+			<!-- HTMX -->
+			<script src="/static/js/htmx.min.js" defer></script>
+			<!-- HTMX Extensions -->
+			<script src="/static/js/response-targets.js" defer></script>
+			<link rel="icon" href="/static/img/favicon.webp"/>
+			<!-- HTMX config -->
+			<!-- <meta name="htmx-config" content='{"responseTargetUnsetsError":"false"}'/> -->
+		</head>
+		<body
+			class="has-[dialog[open]]:overflow-hidden"
+			hx-ext="response-targets"
+		>
+			{ children... }
+		</body>
+	</html>
+}
+
+templ BasePage(title string) {
+	@Base(title) {
+		@Header()
+		{ children... }
+		@Footer()
+	}
+}
+
+templ BaseAdmin(title string) {
+	@Base(title) {
+		<div class="flex justify-center items-start px-4 py-9 min-h-dvh bg-slate-100">
+			<div class="w-full max-w-5xl px-4 py-9 bg-white">
+				<div>
+					<!-- Show image dialog -->
+					<dialog
+						id="show-image-dialog"
+						class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+						m-0 p-6 w-[90%] max-w-lg
+						border border-black bg-white"
+					>
+						<form class="flex justify-between" method="dialog">
+							<h2 class="image:name text-lg"></h2>
+							<button class="font-bold text-azure" type="submit">Salir</button>
+						</form>
+						<div class="image:img flex justify-center mt-3"></div>
+					</dialog>
+				</div>
+				{ children... }
+			</div>
+		</div>
+	}
+}

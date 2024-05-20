@@ -1,0 +1,68 @@
+package product 
+
+import (
+	"fmt"
+	"path"
+	"alc/model/store"
+)
+
+templ Table(item store.Item, products []store.Product) {
+	<table class="table-auto w-full">
+		<thead>
+			<tr class="border-b border-black text-left">
+				<th scope="col">Nombre</th>
+				<th scope="col">Precio</th>
+				if item.Category.Type == store.StoreType {
+					<th scope="col">Stock</th>
+				}
+				<th scope="col">Detalles</th>
+				<th scope="col">Acciones</th>
+			</tr>
+		</thead>
+		<tbody>
+			for _, p := range products {
+				<tr class="border-b border-black">
+					<td>{ p.Name }</td>
+					<td>{ fmt.Sprintf("US$%.2f", float64(p.Price)/100.0) }</td>
+					if item.Category.Type == store.StoreType {
+						if p.Stock != nil {
+							<td>{ fmt.Sprintf("%d", *p.Stock) }</td>
+						} else {
+							<td>No aplica</td>
+						}
+					}
+					<td>
+						for key, value := range p.Details {
+							<div>{ fmt.Sprintf("%s: %s", key, value) }</div>
+						}
+					</td>
+					<td>
+						<button
+							class="block font-semibold text-azure"
+							hx-get={ path.Join("/admin/tienda/type", p.Item.Category.Type.ToSlug(), "categories", p.Item.Category.Slug, "items", p.Item.Slug, "products", p.Slug, "update") }
+							hx-target="#update-item-form"
+						>
+							Editar
+						</button>
+						if item.Category.Type == store.StoreType {
+							<button
+								class="block font-semibold text-azure"
+								hx-get={ path.Join("/admin/tienda/type", p.Item.Category.Type.ToSlug(), "categories", p.Item.Category.Slug, "items", p.Item.Slug, "products", p.Slug, "stock") }
+								hx-target="#update-stock-form"
+							>
+								Actualizar stock
+							</button>
+						}
+						<button
+							class="block font-semibold text-azure"
+							hx-get={ path.Join("/admin/tienda/type", p.Item.Category.Type.ToSlug(), "categories", p.Item.Category.Slug, "items", p.Item.Slug, "products", p.Slug, "delete") }
+							hx-target="#delete-item-form"
+						>
+							Borrar
+						</button>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}

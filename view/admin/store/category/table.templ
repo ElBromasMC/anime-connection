@@ -1,0 +1,63 @@
+package category
+
+import (
+	"path"
+	"alc/config"
+	"alc/model/store"
+	"alc/view/admin"
+)
+
+templ Table(t store.Type, cats []store.Category) {
+	<table class="table-auto w-full">
+		<thead>
+			<tr class="border-b border-black text-left">
+				<th scope="col">Nombre</th>
+				<th class="w-72" scope="col">Descripción</th>
+				<th scope="col">Imagen</th>
+				<th scope="col">Acciones</th>
+			</tr>
+		</thead>
+		<tbody>
+			for _, c := range cats {
+				<tr class="border-b border-black">
+					<td>
+						<a
+							class="font-semibold text-azure"
+							href={ templ.URL(path.Join("/admin/tienda/type", c.Type.ToSlug(), "categories", c.Slug, "items")) }
+						>{ c.Name }</a>
+					</td>
+					<td>{ c.Description }</td>
+					<td>
+						if c.Img.Id != 0 {
+							<button
+								class="block font-semibold text-azure"
+								onclick={ admin.HandleImageShow(c.Img.Filename, path.Join(config.IMAGES_PATH, c.Img.Filename)) }
+							>
+								{ c.Img.Filename }
+							</button>
+						} else {
+							<span>No image</span>
+						}
+					</td>
+					<td>
+						<!-- Control buttons -->
+						<button
+							class="block font-semibold text-azure"
+							hx-get={ path.Join("/admin/tienda/type", c.Type.ToSlug(), "categories", c.Slug, "update") }
+							hx-target="#update-item-form"
+						>
+							Editar
+						</button>
+						<button
+							class="block font-semibold text-azure"
+							hx-get={ path.Join("/admin/tienda/type", c.Type.ToSlug(), "categories", c.Slug, "delete") }
+							hx-target="#delete-item-form"
+						>
+							Borrar
+						</button>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}

@@ -1,0 +1,76 @@
+package store 
+
+import (
+	"fmt"
+	"path"
+	"alc/config"
+	"alc/model/store"
+)
+
+templ Category(like string, page int, slug string, items []store.Item) {
+	if len(items) == 0 {
+		<div class="flex flex-col justify-center items-center">
+			<svg class="w-80 h-80 text-livid" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+				<path fill-rule="evenodd" d="M4 4c0-.6.4-1 1-1h1.5c.5 0 .9.3 1 .8L7.9 6H19a1 1 0 0 1 1 1.2l-1.3 6a1 1 0 0 1-1 .8h-8l.2 1H17a3 3 0 1 1-2.8 2h-2.4a3 3 0 1 1-4-1.8L5.7 5H5a1 1 0 0 1-1-1Z" clip-rule="evenodd"></path>
+			</svg>
+			<h2 class="font-bold text-3xl text-center text-livid">Vaya! no hay items para mostrar</h2>
+		</div>
+	} else {
+		<ul class="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-16">
+			for n, i := range items {
+				if n <= config.PAGINATION - 1 {
+					<li class="flex flex-col items-center gap-4">
+						if i.Img.Id != 0 {
+							<img class="w-44 aspect-square object-cover rounded-xl shadow-[rgba(0,0,0,0.24)_0px_3px_8px]" src={ path.Join(config.IMAGES_PATH, i.Img.Filename) } alt={ i.Slug }/>
+						} else {
+							<img class="w-44 aspect-square object-cover rounded-xl shadow-[rgba(0,0,0,0.24)_0px_3px_8px]" src="/static/img/noimage.png" alt={ i.Slug }/>
+						}
+						<h3 class="font-bold text-xl text-center">{ i.Name }</h3>
+						<a
+							class="px-4 py-1 rounded-xl text-sm font-bold text-chalky bg-azure"
+							href={ templ.URL(path.Join("/store/categories", i.Category.Slug, "items", i.Slug)) }
+						>
+							Ver más
+						</a>
+					</li>
+				}
+			}
+		</ul>
+	}
+	<!-- Navigation buttons -->
+	<div class="flex justify-center mt-12 gap-3">
+		<div
+			if page < 2 {
+				class="text-livid pointer-events-none"
+			} else {
+				class="text-azure cursor-pointer"
+				hx-get={ string(templ.SafeURL(path.Join("/store/categories", slug, fmt.Sprintf("items?p=%d", page-1)))) }
+				hx-target="#store-items"
+				hx-vals={ fmt.Sprintf(`{"like": "%s"}`, like) }
+			}
+		>
+			<svg class="w-10 h-10" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+				<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 16.9V7a1 1 0 0 0-1.6-.8l-6 5a1 1 0 0 0 0 1.5l6 4.9a1 1 0 0 0 1.6-.8Z"></path>
+			</svg>
+		</div>
+		<span class="flex justify-center items-center w-10 aspect-square rounded-full bg-navy">
+			<div class="text-chalky font-bold">
+				{ fmt.Sprintf("%d", page) }
+			</div>
+		</span>
+		<div
+			if len(items) < config.PAGINATION + 1 {
+				class="text-livid pointer-events-none"
+			} else {
+				class="text-azure cursor-pointer"
+				hx-get={ string(templ.SafeURL(path.Join("/store/categories", slug, fmt.Sprintf("items?p=%d", page+1)))) }
+				hx-target="#store-items"
+				hx-vals={ fmt.Sprintf(`{"like": "%s"}`, like) }
+			}
+		>
+			<svg class="w-10 h-10" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+				<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16.9V7a1 1 0 0 1 1.6-.8l6 5a1 1 0 0 1 0 1.5l-6 4.9a1 1 0 0 1-1.6-.8Z"></path>
+			</svg>
+		</div>
+	</div>
+}

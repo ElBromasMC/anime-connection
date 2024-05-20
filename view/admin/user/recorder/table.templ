@@ -1,0 +1,47 @@
+package recorder
+
+import (
+	"path"
+	"time"
+	"alc/model/auth"
+)
+
+func GetTime(t time.Time) string {
+	loc, _ := time.LoadLocation("America/Lima")
+	locTime := t.In(loc)
+	return locTime.Format(time.DateTime)
+}
+
+templ Table(users []auth.User) {
+	<table class="table-auto w-full">
+		<thead>
+			<tr class="border-b border-black text-left">
+				<th scope="col">Nombre</th>
+				<th scope="col">Email</th>
+				<th scope="col">Rol</th>
+				<th scope="col">Creado el</th>
+				<th scope="col">Acciones</th>
+			</tr>
+		</thead>
+		<tbody>
+			for _, user := range users {
+				<tr class="border-b border-black">
+					<td>{ user.Name }</td>
+					<td>{ user.Email }</td>
+					<td>{ string(user.Role) }</td>
+					<td>{ GetTime(user.CreatedAt) }</td>
+					<td>
+						<!-- Control buttons -->
+						<button
+							class="block font-semibold text-azure"
+							hx-get={ string(templ.URL(path.Join("/admin/usuarios/role/recorder/users/", user.Id.String(), "delete"))) }
+							hx-target="#delete-item-form"
+						>
+							Borrar
+						</button>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}

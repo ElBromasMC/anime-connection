@@ -1,0 +1,62 @@
+package recorder
+
+import (
+	"path"
+	"alc/model/auth"
+)
+
+templ InsertionForm() {
+	<form
+		class="space-y-2"
+		enctype="multipart/form-data"
+		autocomplete="off"
+		hx-post="/admin/usuarios/role/recorder/users"
+		hx-target="#table-items"
+		hx-encoding="multipart/form-data"
+		hx-on::after-request="this.reset();"
+		hx-target-error="#insertion-error-message"
+		hx-indicator="#insertion-indicator"
+	>
+		<div>
+			<label>Nombre:</label>
+			<input class="block w-full border border-livid" type="text" name="name" required/>
+		</div>
+		<div>
+			<label>Email:</label>
+			<input class="block w-full border border-livid" type="email" name="email" required/>
+		</div>
+		<div>
+			<label>Contraseña:</label>
+			<input class="block w-full border border-livid" type="password" name="password" required/>
+		</div>
+		<div class="flex gap-6 !mt-3">
+			<button class="font-bold text-azure" type="submit">Guardar</button>
+			<button class="font-bold text-azure" type="reset">Reiniciar</button>
+		</div>
+	</form>
+}
+
+templ DeletionForm(user auth.User) {
+	<form
+		class="space-y-2"
+		enctype="multipart/form-data"
+		autocomplete="off"
+		hx-delete={ string(templ.URL(path.Join("/admin/usuarios/role/recorder/users", user.Id.String()))) }
+		hx-target="#table-items"
+		hx-encoding="multipart/form-data"
+		hx-target-error="#deletion-error-message"
+		hx-indicator="#deletion-indicator"
+	>
+		<div>
+			<label>Nombre:</label>
+			<input class="block w-full border border-livid" type="text" value={ user.Name } disabled/>
+		</div>
+		<div>
+			<label>Email:</label>
+			<input class="block w-full border border-livid" type="text" value={ user.Email } disabled/>
+		</div>
+		<div class="flex gap-6 !mt-3">
+			<button class="font-bold text-azure" type="submit">Sí</button>
+		</div>
+	</form>
+}

@@ -1,0 +1,83 @@
+package device
+
+import (
+	"alc/model/store"
+	"alc/view/layout"
+	"alc/view/component"
+)
+
+templ Show(devices []store.Device) {
+	@layout.BaseAdmin("Series") {
+		<div>
+			<!-- New item dialog -->
+			<dialog
+				class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0 p-6 w-[90%] max-w-lg border border-black bg-white"
+				hx-on::after-swap="this.showModal();"
+				hx-on::after-request="if(event.detail.target.id==='table-items'){this.close();}"
+			>
+				<form class="flex justify-between" method="dialog">
+					<div class="flex gap-4 items-center">
+						<h2 class="font-bold text-2xl">Activar serie</h2>
+						<img id="insertion-indicator" class="htmx-indicator w-9" src="/static/img/bars.svg"/>
+					</div>
+					<button class="font-bold text-azure" type="submit">Salir</button>
+				</form>
+				<div id="insert-item-form"></div>
+			</dialog>
+			<!-- Desactivate item dialog -->
+			<dialog
+				class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0 p-6 w-[90%] max-w-lg border border-black bg-white"
+				hx-on::after-swap="this.showModal();"
+				hx-on::after-request="this.close();"
+			>
+				<form class="flex justify-between" method="dialog">
+					<div class="flex gap-4 items-center">
+						<h2 class="font-bold text-2xl">¿Estás seguro?</h2>
+						<img id="desactivation-indicator" class="htmx-indicator w-9" src="/static/img/bars.svg"/>
+					</div>
+					<button class="font-bold text-azure" type="submit">Salir</button>
+				</form>
+				<div id="desactivation-error-message" class="min-h-6"></div>
+				<div id="desactivate-item-form"></div>
+			</dialog>
+			<!-- Item history -->
+			<dialog
+				class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0 p-6 w-[90%] max-w-lg border border-black bg-white"
+				hx-on::after-swap="this.showModal();"
+				hx-on::after-request="this.close();"
+			>
+				<form class="flex justify-between" method="dialog">
+					<div class="flex gap-4 items-center">
+						<h2 class="font-bold text-2xl">Historial</h2>
+					</div>
+					<button class="font-bold text-azure" type="submit">Salir</button>
+				</form>
+				<div id="item-history"></div>
+			</dialog>
+		</div>
+		<main>
+			<!-- Navigation -->
+			<div>
+				<span class="font-semibold text-azure"><a href="/admin">Administración</a></span>
+				@component.IconRight()
+				<span class="text-livid">Series</span>
+			</div>
+			<!-- Title -->
+			<h1 class="mt-3 font-bold text-3xl">Series</h1>
+			<!-- Control buttons -->
+			<div>
+				<button
+					class="font-semibold text-azure"
+					hx-get="/admin/dispositivos/insert"
+					hx-target="#insert-item-form"
+				>
+					Activar serie
+				</button>
+			</div>
+			<!-- Items show table -->
+			<div id="table-items">
+				@Table(devices)
+			</div>
+		</main>
+	}
+}

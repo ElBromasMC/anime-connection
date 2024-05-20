@@ -1,0 +1,65 @@
+networks:
+  http_network:
+    external: true
+  store_network:
+    external: false
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: always
+    user: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - type: bind
+        source: ./init.sql
+        target: /docker-entrypoint-initdb.d/init.sql
+        read_only: true
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    networks:
+      - store_network
+    expose:
+      - 5432
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  webserver:
+    image: "elbromasmc/team-support"
+    restart: unless-stopped
+    volumes:
+      - store-images:/images
+    environment:
+      - ENV=${ENV}
+      - DATABASE_URL=postgres://postgres:${DB_PASSWORD}@db:5432/${DB_NAME}?sslmode=disable
+      - SESSION_KEY=${SESSION_KEY}
+      - PORT=${PORT}
+      - REL=${REL}
+      - SMTP_HOSTNAME=${SMTP_HOSTNAME}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+    networks:
+      - http_network
+      - store_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=http_network"
+      - "traefik.http.routers.webserver.entrypoints=websecure"
+      - "traefik.http.routers.webserver.rule=Host(`www.teamsupportperu.com`)"
+      - "traefik.http.routers.webserver.service=webserver"
+      - "traefik.http.routers.webserver.tls=true"
+      - "traefik.http.routers.webserver.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.webserver.tls.domains[0].main=www.teamsupportperu.com"
+      - "traefik.http.routers.webserver.tls.options=default"
+      - "traefik.http.services.webserver.loadbalancer.server.port=8080"
+      - "traefik.http.services.webserver.loadbalancer.server.scheme=http"
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  db-data:
+  store-images:
