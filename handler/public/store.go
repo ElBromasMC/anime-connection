@@ -14,11 +14,11 @@ import (
 // GET "/store/categories/all"
 func (h *Handler) HandleStoreAllShow(c echo.Context) error {
 	// Query data
-	cats, err := h.PublicService.GetCategories(store.StoreType)
+	cats, err := h.PublicService.GetCategories(store.MangaType)
 	if err != nil {
 		return err
 	}
-	items, err := h.PublicService.GetAllItemsLike(store.StoreType, "", 1, config.PAGINATION)
+	items, err := h.PublicService.GetAllItemsLike(store.MangaType, "", 1, config.PAGINATION)
 	if err != nil {
 		return err
 	}
@@ -32,7 +32,7 @@ func (h *Handler) HandleStoreCategoryShow(c echo.Context) error {
 	categorySlug := c.Param("categorySlug")
 
 	// Query data
-	cat, err := h.PublicService.GetCategory(store.StoreType, categorySlug)
+	cat, err := h.PublicService.GetCategory(store.MangaType, categorySlug)
 	if err != nil {
 		return err
 	}
@@ -40,7 +40,7 @@ func (h *Handler) HandleStoreCategoryShow(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	cats, err := h.PublicService.GetCategories(store.StoreType)
+	cats, err := h.PublicService.GetCategories(store.MangaType)
 	if err != nil {
 		return err
 	}
@@ -60,7 +60,7 @@ func (h *Handler) HandleStoreAllItemsShow(c echo.Context) error {
 	}
 
 	// Query data
-	items, err := h.PublicService.GetAllItemsLike(store.StoreType, like, page, config.PAGINATION)
+	items, err := h.PublicService.GetAllItemsLike(store.MangaType, like, page, config.PAGINATION)
 	if err != nil {
 		return err
 	}
@@ -81,7 +81,7 @@ func (h *Handler) HandleStoreCategoryItemsShow(c echo.Context) error {
 	}
 
 	// Query data
-	cat, err := h.PublicService.GetCategory(store.StoreType, categorySlug)
+	cat, err := h.PublicService.GetCategory(store.MangaType, categorySlug)
 	if err != nil {
 		return err
 	}
@@ -100,7 +100,7 @@ func (h *Handler) HandleStoreItemShow(c echo.Context) error {
 	itemSlug := c.Param("itemSlug")
 
 	// Query data
-	cat, err := h.PublicService.GetCategory(store.StoreType, categorySlug)
+	cat, err := h.PublicService.GetCategory(store.MangaType, categorySlug)
 	if err != nil {
 		return err
 	}

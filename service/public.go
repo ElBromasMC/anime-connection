@@ -25,10 +25,8 @@ func NewPublicService(db *pgxpool.Pool) Public {
 
 func (ps Public) GetType(slug string) (store.Type, error) {
 	var t store.Type
-	if slug == store.GarantiaType.ToSlug() {
-		t = store.GarantiaType
-	} else if slug == store.StoreType.ToSlug() {
-		t = store.StoreType
+	if slug == store.MangaType.ToSlug() {
+		t = store.MangaType
 	} else {
 		return "", echo.NewHTTPError(http.StatusBadRequest, "Invalid type")
 	}

@@ -55,7 +55,7 @@ func Admin(next echo.HandlerFunc) echo.HandlerFunc {
 		if !ok {
 			return c.Redirect(http.StatusFound, "/login?to=/admin")
 		}
-		if u.Role != auth.AdminRole && u.Role != auth.RecorderRole {
+		if u.Role != auth.AdminRole && u.Role != auth.SellerRole && u.Role != auth.ModeratorRole {
 			return c.Redirect(http.StatusFound, "/login?to=/admin")
 		}
 		return next(c)
@@ -69,6 +69,32 @@ func RoleAdmin(next echo.HandlerFunc) echo.HandlerFunc {
 			return c.Redirect(http.StatusFound, "/login?to=/admin")
 		}
 		if u.Role != auth.AdminRole {
+			return c.Redirect(http.StatusFound, "/login?to=/admin")
+		}
+		return next(c)
+	}
+}
+
+func RoleSeller(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		u, ok := auth.GetUser(c.Request().Context())
+		if !ok {
+			return c.Redirect(http.StatusFound, "/login?to=/admin")
+		}
+		if u.Role != auth.SellerRole {
+			return c.Redirect(http.StatusFound, "/login?to=/admin")
+		}
+		return next(c)
+	}
+}
+
+func RoleModerator(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		u, ok := auth.GetUser(c.Request().Context())
+		if !ok {
+			return c.Redirect(http.StatusFound, "/login?to=/admin")
+		}
+		if u.Role != auth.ModeratorRole {
 			return c.Redirect(http.StatusFound, "/login?to=/admin")
 		}
 		return next(c)

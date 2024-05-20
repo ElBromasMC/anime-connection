@@ -13,8 +13,7 @@ type Image struct {
 type Type string
 
 const (
-	StoreType    Type = "STORE"
-	GarantiaType Type = "GARANTIA"
+	MangaType Type = "MANGA"
 )
 
 type Category struct {
@@ -27,14 +26,15 @@ type Category struct {
 }
 
 type Item struct {
-	Id              int      `json:"id"`
-	Category        Category `json:"category"`
-	Name            string   `json:"name"`
-	Description     string   `json:"description"`
-	LongDescription string   `json:"longDescription"`
-	Img             Image    `json:"img"`
-	LargeImg        Image    `json:"largeImg"`
-	Slug            string   `json:"slug"`
+	Id              int       `json:"id"`
+	Category        Category  `json:"category"`
+	Name            string    `json:"name"`
+	Description     string    `json:"description"`
+	LongDescription string    `json:"longDescription"`
+	Img             Image     `json:"img"`
+	LargeImg        Image     `json:"largeImg"`
+	Slug            string    `json:"slug"`
+	CreatedBy       auth.User `json:"-"`
 }
 
 type Product struct {
@@ -73,26 +73,6 @@ type ItemComment struct {
 	EditedAt    time.Time
 }
 
-// Serial management
-type Device struct {
-	Id        int
-	Serie     string
-	Valid     bool
-	CreatedAt time.Time
-	UpdatedAt time.Time
-}
-
-type DeviceHistory struct {
-	Id       int
-	Device   Device
-	IssuedBy string
-	IssuedAt time.Time
-}
-
 func (t Type) ToSlug() string {
-	if t == GarantiaType {
-		return "garantia"
-	} else {
-		return "store"
-	}
+	return "manga"
 }

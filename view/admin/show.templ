@@ -1,7 +1,6 @@
 package admin
 
 import (
-	"alc/model/auth"
 	"alc/view/layout"
 )
 
@@ -21,24 +20,12 @@ templ Show() {
 			<h1 class="font-bold text-3xl">Administración</h1>
 			<!-- Navigation -->
 			<ul class="mt-6 space-y-2">
-				if user, ok := auth.GetUser(ctx); ok {
-					switch user.Role {
-						case auth.AdminRole:
-							<li>
-								<a class="font-semibold text-azure" href="/admin/tienda">Tienda</a>
-							</li>
-							<li>
-								<a class="font-semibold text-azure" href="/admin/usuarios">Usuarios</a>
-							</li>
-							<li>
-								<a class="font-semibold text-azure" href="/admin/dispositivos">Series</a>
-							</li>
-						case auth.RecorderRole:
-							<li>
-								<a class="font-semibold text-azure" href="/admin/dispositivos">Series</a>
-							</li>
-					}
-				}
+				<li>
+					<a class="font-semibold text-azure" href="/admin/tienda">Tienda</a>
+				</li>
+				<li>
+					<a class="font-semibold text-azure" href="/admin/usuarios">Usuarios</a>
+				</li>
 			</ul>
 		</main>
 	}

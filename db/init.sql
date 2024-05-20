@@ -1,8 +1,13 @@
+/* Aspectos generales de la base de datos:
+- Se prefiere el valor 'cero' de los tipos antes que NULL
+  para mejorar la integración con el servidor web */
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pg_trgm";
 CREATE EXTENSION IF NOT EXISTS "hstore";
 
 -- Row update management
+/* Función que actualiza la columna 'updated_at' automáticamente
+después de un comando UPDATE en una fila */
 CREATE OR REPLACE FUNCTION trigger_set_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -12,8 +17,14 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- User administration
-CREATE TYPE user_role AS ENUM ('ADMIN', 'NORMAL', 'RECORDER');
+/* ADMIN: Representa a los administradores de la página
+   SELLER: Representa a los vendedores autenticados
+   MODERATOR: Representa a los moderadores de la página
+   NORMAL: Representa al usuario interesado en los productos */
+CREATE TYPE user_role AS ENUM ('ADMIN', 'SELLER', 'MODERATOR', 'NORMAL');
 
+/* Entidad que representa a los usuarios del sistema, la
+contraseña se debe encriptar antes de almacenarla */
 CREATE TABLE IF NOT EXISTS users (
     user_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(255) NOT NULL,
@@ -24,6 +35,9 @@ CREATE TABLE IF NOT EXISTS users (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+/* Entidad que representa las sesiones de los usuarios en la
+página, se eliminan automáticamente después de 1 mes. Por lo que,
+los usuarios deben logearse nuevamente */
 CREATE TABLE IF NOT EXISTS sessions (
     session_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL,
@@ -33,14 +47,21 @@ CREATE TABLE IF NOT EXISTS sessions (
 );
 
 -- Image administrarion
+/* Entidad que representa las imágenes, se almacenan usando el
+sistema de archivos del sistema operativo. La base de datos
+solo se almacena el enlace a dicha imagen */
 CREATE TABLE IF NOT EXISTS images (
     id SERIAL PRIMARY KEY,
     filename VARCHAR(25) UNIQUE NOT NULL
 );
 
 -- Store administration
-CREATE TYPE store_type AS ENUM ('STORE', 'GARANTIA');
+/* MANGA: Tipo que representa todo lo relacionado a la venta de manga
+*/
+CREATE TYPE store_type AS ENUM ('MANGA');
 
+/* Entidad que representa las categorías creadas por los administradores
+de la página. En las que se pueden clasificar los items de la tienda */
 CREATE TABLE IF NOT EXISTS store_categories (
     id SERIAL PRIMARY KEY,
     type store_type NOT NULL,
@@ -54,6 +75,10 @@ CREATE TABLE IF NOT EXISTS store_categories (
     FOREIGN KEY (img_id) REFERENCES images(id) ON DELETE SET NULL
 );
 
+/* Entidad que representa a los items de la tienda, aquellos publicados
+por los vendedores, pueden incluir más de un producto. Por ejemplo,
+pequeñas variaciones o adiciones. Usa un índice GIN para optimizar
+las búsquedas por nombre */
 CREATE TABLE IF NOT EXISTS store_items (
     id SERIAL PRIMARY KEY,
     category_id INT NOT NULL,
@@ -63,16 +88,21 @@ CREATE TABLE IF NOT EXISTS store_items (
     img_id INT,
     largeimg_id INT,
     slug VARCHAR(255) NOT NULL,
+    created_by UUID NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     UNIQUE(category_id, slug),
     FOREIGN KEY (category_id) REFERENCES store_categories(id) ON DELETE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (img_id) REFERENCES images(id) ON DELETE SET NULL,
     FOREIGN KEY (largeimg_id) REFERENCES images(id) ON DELETE SET NULL
 );
 CREATE INDEX idx_items_name ON store_items USING gin (name gin_trgm_ops);
 
 -- Product management
+/* Entidad que representa a los productos asociados a un item. Representan
+pequeñas variaciones o adiciones del item que se ofrece. La columna price
+almacena el precio base. */
 CREATE TABLE IF NOT EXISTS store_products (
     id SERIAL PRIMARY KEY,
     item_id INT NOT NULL,
@@ -87,6 +117,9 @@ CREATE TABLE IF NOT EXISTS store_products (
     FOREIGN KEY (item_id) REFERENCES store_items(id) ON DELETE CASCADE
 );
 
+/* Descuentos asociados a los productos. Podrán ser reclamados mediante
+un cupón. Almacena el periodo en el que es válido y opcionalmente la cantidad
+mínima y máxima para el cual tiene efecto */
 CREATE TABLE IF NOT EXISTS product_discount (
     id SERIAL PRIMARY KEY,
     product_id INT NOT NULL,
@@ -102,6 +135,8 @@ CREATE TABLE IF NOT EXISTS product_discount (
 );
 
 -- Comment management
+/* Entidad que representa los comentarios y valoraciones asociadas a un item
+de la tienda */
 CREATE TABLE IF NOT EXISTS item_comments (
     id SERIAL PRIMARY KEY,
     item_id INT NOT NULL,
@@ -118,28 +153,16 @@ CREATE TABLE IF NOT EXISTS item_comments (
     FOREIGN KEY (commented_by) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
--- Serial management
-CREATE TABLE IF NOT EXISTS store_devices (
-    id SERIAL PRIMARY KEY,
-    serie VARCHAR(25) UNIQUE NOT NULL,
-    valid BOOLEAN NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
-CREATE TABLE IF NOT EXISTS store_devices_history (
-    id SERIAL PRIMARY KEY,
-    device_id INT NOT NULL,
-    issued_by VARCHAR(255) NOT NULL,
-    issued_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (device_id) REFERENCES store_devices(id) ON DELETE RESTRICT
-);
-
 -- Order administration
+/* Representa los estados en los que pueden estar los productos
+asociados a una orden de compra */
 CREATE TYPE order_status AS ENUM ('PENDIENTE', 'EN PROCESO', 'POR CONFIRMAR', 'ENTREGADO', 'CANCELADO');
 
 CREATE SEQUENCE purchase_order_seq AS INT START WITH 100000;
-
+/* Entidad que representa las órdenes de compra, las que se
+generan una vez completado el checkout y el pago. Sirve como
+historial y le da información al cliente sobre el estado
+de su órden */
 CREATE TABLE IF NOT EXISTS store_orders (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     purchase_order INT DEFAULT nextval('purchase_order_seq'),
@@ -156,6 +179,9 @@ CREATE TABLE IF NOT EXISTS store_orders (
     FOREIGN KEY (assigned_to) REFERENCES users(user_id) ON DELETE SET NULL
 );
 
+/* Entidad que representa los productos asociados a las órdenes
+de compra, almacena a manera de historial la información del producto
+al momento que lo compró */
 CREATE TABLE IF NOT EXISTS order_products (
     id SERIAL PRIMARY KEY,
     order_id UUID NOT NULL,
@@ -174,6 +200,8 @@ CREATE TABLE IF NOT EXISTS order_products (
     FOREIGN KEY (product_id) REFERENCES store_products(id) ON DELETE SET NULL
 );
 
+/* Triggers que ejecutan la función 'trigger_set_timestamp' antes de
+una instrucción UPDATE */
 -- Order triggers
 CREATE OR REPLACE TRIGGER set_order_timestamp
 BEFORE UPDATE ON order_products
@@ -206,12 +234,3 @@ CREATE OR REPLACE TRIGGER set_user_timestamp
 BEFORE UPDATE ON users
 FOR EACH ROW
 EXECUTE PROCEDURE trigger_set_timestamp();
-
--- Serial triggers
-CREATE OR REPLACE TRIGGER set_device_timestamp
-BEFORE UPDATE ON store_devices
-FOR EACH ROW
-EXECUTE PROCEDURE trigger_set_timestamp();
-
--- Comment triggers
--- TODO

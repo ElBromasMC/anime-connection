@@ -116,10 +116,8 @@ templ Show(items []cart.Item) {
 							<div class="leading-none">
 								<a
 									class="font-bold text-sm hover:text-livid"
-									if i.Product.Item.Category.Type == store.GarantiaType {
+									if i.Product.Item.Category.Type == store.MangaType {
 										href={ templ.URL(path.Join("/garantia", i.Product.Item.Category.Slug, i.Product.Item.Slug)) }
-									} else {
-										href={ templ.URL(path.Join("/store/categories", i.Product.Item.Category.Slug, "items", i.Product.Item.Slug)) }
 									}
 								>
 									{ i.Product.Item.Name + " - " + i.Product.Name }

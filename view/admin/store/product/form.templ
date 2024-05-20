@@ -24,12 +24,10 @@ templ InsertionForm(item store.Item) {
 			<label>Precio:</label>
 			<input class="block w-full border border-livid" placeholder="US$" type="number" min="0" step="0.01" name="price" required/>
 		</div>
-		if item.Category.Type == store.StoreType {
-			<div>
-				<label>Stock:</label>
-				<input class="block w-full border border-livid" type="number" min="1" name="stock" required/>
-			</div>
-		}
+		<div>
+			<label>Stock:</label>
+			<input class="block w-full border border-livid" type="number" min="1" name="stock" required/>
+		</div>
 		<div class="flex gap-6 !mt-3">
 			<button class="font-bold text-azure" type="submit">Guardar</button>
 			<button class="font-bold text-azure" type="reset">Reiniciar</button>

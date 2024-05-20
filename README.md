@@ -1,7 +1,6 @@
-# go-webserver-template
-Team Support Peru webpage
+# AnimeConnection webpage
 
-### Prerequisites
+## Prerequisites
 * Go
 * Node and npm
 * PostgreSQL
@@ -9,17 +8,17 @@ Team Support Peru webpage
 * [Templ](https://templ.guide/quick-start/installation)
 * inotify-tools
 
-### Install build dependencies
+## Install build dependencies
 ```shell
 $ npm install
 ```
 
-### Initialize the required tables
+## Initialize the required tables
 ```shell
 $ psql -d <database_name> -U <username> -f ./db/init.sql
 ```
 
-### .env file example
+## .env file example
 ```
 ENV=development
 DATABASE_URL=postgres://<username>:<password>@localhost:5432/<database_name>
@@ -31,12 +30,12 @@ SMTP_USER=<username>
 SMTP_PASS=<password>
 ```
 
-### Load env variables
+## Load env variables
 ```shell
 $ export $(grep -v '^#' .env | xargs -d '\n')
 ```
 
-### Live reload
+## Live reload
 ```shell
 $ make live
 ```

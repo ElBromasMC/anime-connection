@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/gofrs/uuid/v5"
-	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v4"
 )
@@ -63,37 +62,6 @@ FROM users WHERE email = $1`, email).Scan(&id, &hpass); err != nil {
 		return uuid.UUID{}, []byte{}, echo.NewHTTPError(http.StatusUnauthorized, "Email no encontrado")
 	}
 	return id, []byte(hpass), nil
-}
-
-func (us Auth) GetRecorderUsers() ([]auth.User, error) {
-	sql := `SELECT user_id, name, email, role, created_at FROM users WHERE role = $1`
-	rows, err := us.db.Query(context.Background(), sql, auth.RecorderRole)
-	if err != nil {
-		return []auth.User{}, echo.NewHTTPError(http.StatusInternalServerError)
-	}
-	defer rows.Close()
-
-	users, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (auth.User, error) {
-		var user auth.User
-		if err := row.Scan(&user.Id, &user.Name, &user.Email, &user.Role, &user.CreatedAt); err != nil {
-			return auth.User{}, err
-		}
-		return user, nil
-	})
-	if err != nil {
-		return []auth.User{}, echo.NewHTTPError(http.StatusInternalServerError)
-	}
-
-	return users, nil
-}
-
-func (us Auth) InsertRecorderUser(u auth.User, hpass []byte) error {
-	if _, err := us.db.Exec(context.Background(), `INSERT INTO users (name, email, hashed_password, role)
-VALUES ($1, $2, $3, $4)`, u.Name, u.Email, string(hpass), auth.RecorderRole); err != nil {
-		// TODO: Test and handle unique email condition
-		return echo.NewHTTPError(http.StatusConflict, "Ya existe una cuenta con el email proporcionado")
-	}
-	return nil
 }
 
 // Session management

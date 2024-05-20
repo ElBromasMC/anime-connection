@@ -3,11 +3,9 @@ package public
 import (
 	"alc/handler/util"
 	"alc/model/cart"
-	"alc/model/store"
 	view "alc/view/cart"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/gorilla/sessions"
 	"github.com/labstack/echo-contrib/session"
@@ -54,14 +52,6 @@ func (h *Handler) HandleNewCartItem(c echo.Context) error {
 	found := false
 	for n, i := range items {
 		if i.Product.Item.Id != item.Product.Item.Id {
-			continue
-		}
-		if i.Product.Item.Category.Type != store.StoreType {
-			if !strings.EqualFold(i.Details["Serie"], item.Details["Serie"]) {
-				continue
-			}
-			found = true
-			items[n] = item
 			continue
 		}
 		if i.Product.Id != item.Product.Id {

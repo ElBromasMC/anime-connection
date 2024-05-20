@@ -24,25 +24,12 @@ type ItemRequest struct {
 }
 
 func (item Item) IsValid() error {
-	if item.Product.Item.Category.Type == store.GarantiaType {
-		if item.Quantity != 1 {
-			return errors.New("invalid quantity for warranty")
-		}
-		serie, ok := item.Details["Serie"]
-		if !ok {
-			return errors.New("missing 'Serie' for warranty")
-		}
-		if !(12 <= len(serie) && len(serie) <= 15) {
-			return errors.New("invalid 'Serie' for warranty")
-		}
-	} else {
-		if item.Quantity < 1 {
-			return errors.New("invalid quantity for store item")
-		}
-		if item.Product.Stock != nil {
-			if item.Quantity > *item.Product.Stock {
-				return errors.New("quantity exceeds current stock")
-			}
+	if item.Quantity < 1 {
+		return errors.New("invalid quantity for store item")
+	}
+	if item.Product.Stock != nil {
+		if item.Quantity > *item.Product.Stock {
+			return errors.New("quantity exceeds current stock")
 		}
 	}
 	return nil

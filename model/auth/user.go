@@ -14,9 +14,10 @@ type AuthKey struct{}
 type UserRole string
 
 const (
-	AdminRole    UserRole = "ADMIN"
-	NormalRole   UserRole = "NORMAL"
-	RecorderRole UserRole = "RECORDER"
+	AdminRole     UserRole = "ADMIN"
+	SellerRole    UserRole = "SELLER"
+	ModeratorRole UserRole = "MODERATOR"
+	NormalRole    UserRole = "NORMAL"
 )
 
 type User struct {
