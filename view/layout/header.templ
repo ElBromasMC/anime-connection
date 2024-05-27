@@ -7,7 +7,7 @@ import (
 )
 
 templ Header() {
-	<header class="top-0 z-50 bg-white max-w-7xl mx-auto border-b-4 border-b-amber-500">
+	<header class="relative top-0 z-50 bg-white max-w-7xl mx-auto border-b-4 border-b-amber-500">
 		<div class="flex items-center px-4 py-4 max-w-6xl mx-auto lg:pt-9 lg:pb-5">
 			<!-- Navigation button -->
 			<script>
@@ -29,7 +29,7 @@ templ Header() {
 				</svg>
 			</button>
 			<!-- Navigation bar (mobiles) -->
-			<nav class="hidden absolute top-full inset-x-0 shadow-md peer-data-[open]:block lg:!hidden">
+			<nav class="hidden absolute bg-white top-full inset-x-0 shadow-md peer-data-[open]:block lg:!hidden">
 				<ul class="flex flex-col divide-y font-bold uppercase">
 					<li><a class="flex justify-center items-center h-12" href="/store">Mangas</a></li>
 					<li><a class="flex justify-center items-center h-12" href="/#nosotros">Nosotros</a></li>

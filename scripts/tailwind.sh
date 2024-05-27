@@ -23,7 +23,7 @@ fi
 if [ "$LAST_LINE" -ge "$CURRENT_LINES" ]; then
     echo "Waiting"
     while read f; do 
-        if [ "$f" = "$LOG_FILE" ] && [ $(($(wc -l < "$TMP_DIR/$LOG_FILE") % 4)) -eq 1 ]; then 
+        if [ "$f" = "$LOG_FILE" ] && [ $(($(wc -l < "$TMP_DIR/$LOG_FILE") % 4)) -eq 3 ]; then 
             pkill -P $$ inotifywait
             break
         fi

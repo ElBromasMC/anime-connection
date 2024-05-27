@@ -59,7 +59,7 @@ live:
 ifeq ($(ENV),development)
 	mkdir -p "$(TMP_DIR)"
 	"$(NODEBIN)/tailwindcss" build -i tailwind.css -o "$(TAILWINDCSS_OUT)" --watch=always &> "$(TMP_DIR)/$(TAILWINDCSS_LOG)" &
-	node ./scripts/live-reload.js &
+	node ./scripts/live-reload.cjs &
 	"$(GOBIN)/air"
 else
 	@echo "Must run with ENV=development"
