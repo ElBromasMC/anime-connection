@@ -48,9 +48,9 @@ templ Item(item store.Item, products []store.Product) {
 					</span>
 				</div>
 				<!-- Imagen -->
-				<div class="lg:col-span-1">
+				<div class="flex justify-center lg:col-span-1">
 					<img
-						class="w-full aspect-[7/4] object-cover rounded-3xl shadow-[rgba(0,0,0,0.24)_0px_3px_8px]"
+						class="w-[60%] aspect-[2/3] object-cover rounded-3xl shadow-[rgba(0,0,0,0.24)_0px_3px_8px] lg:w-[50%]"
 						if item.LargeImg.Id != 0 {
 							src={ path.Join(config.IMAGES_PATH, item.LargeImg.Filename) }
 							alt={ item.Slug }
