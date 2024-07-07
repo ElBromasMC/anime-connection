@@ -1,8 +1,8 @@
 package item
 
 import (
-	"path"
 	"alc/model/store"
+	"path"
 )
 
 templ InsertionForm(cat store.Category) {
@@ -20,16 +20,12 @@ templ InsertionForm(cat store.Category) {
 			<input class="block w-full border border-livid" type="text" name="name" required/>
 		</div>
 		<div>
-			<label>Descripción:</label>
+			<label>Sinopsis:</label>
 			<input class="block w-full border border-livid" type="text" name="description"/>
 		</div>
 		<div>
 			<label>Miniatura:</label>
 			<input class="block" type="file" name="img" accept="image/png, image/jpeg, image/webp"/>
-		</div>
-		<div>
-			<label>Descripción larga:</label>
-			<textarea class="block resize-none w-full h-36 border border-livid" name="longDescription"></textarea>
 		</div>
 		<div>
 			<label>Imagen:</label>
@@ -56,16 +52,12 @@ templ UpdateForm(item store.Item) {
 			<input class="block w-full border border-livid" type="text" name="name" value={ item.Name } required/>
 		</div>
 		<div>
-			<label>Descripción:</label>
+			<label>Sinopsis:</label>
 			<input class="block w-full border border-livid" type="text" name="description" value={ item.Description }/>
 		</div>
 		<div>
 			<label>Miniatura:</label>
 			<input class="block" type="file" name="img" accept="image/png, image/jpeg, image/webp"/>
-		</div>
-		<div>
-			<label>Descripción larga:</label>
-			<textarea class="block resize-none w-full h-36 border border-livid" name="longDescription">{ item.LongDescription }</textarea>
 		</div>
 		<div>
 			<label>Imagen:</label>

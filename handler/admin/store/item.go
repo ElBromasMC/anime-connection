@@ -105,7 +105,9 @@ func (h *Handler) HandleItemUpdate(c echo.Context) error {
 	var i store.Item
 	i.Name = c.FormValue("name")
 	i.Description = c.FormValue("description")
+	i.LongDescription = c.FormValue("longDescription")
 	img, imgErr := c.FormFile("img")
+	largeImg, largeImgErr := c.FormFile("largeImg")
 
 	// Query data
 	t, err := h.AdminService.GetType(typeSlug)
@@ -132,6 +134,14 @@ func (h *Handler) HandleItemUpdate(c echo.Context) error {
 			return err
 		}
 		i.Img = newImg
+	}
+
+	if largeImgErr == nil {
+		newLargeImg, err := h.AdminService.InsertImage(largeImg)
+		if err != nil {
+			return err
+		}
+		i.LargeImg = newLargeImg
 	}
 
 	// Update item

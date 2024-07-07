@@ -1,10 +1,10 @@
 package item 
 
 import (
-	"path"
 	"alc/config"
 	"alc/model/store"
 	"alc/view/admin"
+	"path"
 )
 
 templ Table(cat store.Category, items []store.Item) {
@@ -12,9 +12,8 @@ templ Table(cat store.Category, items []store.Item) {
 		<thead>
 			<tr class="border-b border-black text-left">
 				<th scope="col">Nombre</th>
-				<th class="w-72" scope="col">Descripción</th>
+				<th class="w-72" scope="col">Sinopsis</th>
 				<th scope="col">Miniatura</th>
-				<th scope="col">Descripción larga</th>
 				<th scope="col">Imagen</th>
 				<th scope="col">Acciones</th>
 			</tr>
@@ -41,7 +40,6 @@ templ Table(cat store.Category, items []store.Item) {
 							<span>No image</span>
 						}
 					</td>
-					<td>{ i.LongDescription }</td>
 					<td>
 						if i.LargeImg.Id != 0 {
 							<button

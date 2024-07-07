@@ -1,11 +1,11 @@
 package store
 
 import (
-	"fmt"
-	"path"
+	"alc/config"
 	"alc/model/store"
 	"alc/view/layout"
-	"alc/config"
+	"fmt"
+	"path"
 )
 
 script HandleProductChange() {
@@ -73,7 +73,7 @@ templ Item(item store.Item, products []store.Product) {
 					<ul class="list-disc list-inside text-sm font-bold">
 						<li>Precio incluye el I.G.V</li>
 						<li>Precio sujeto a cambios sin previo aviso</li>
-						<li>Precio no incluye flete por envío</li>
+						<li>No incluye costo de envio</li>
 					</ul>
 					<!-- Formulario de compra -->
 					<form
@@ -129,20 +129,16 @@ templ Item(item store.Item, products []store.Product) {
 				<div class="rounded-3xl shadow-[rgba(0,0,0,0.24)_0px_3px_8px] overflow-hidden lg:col-span-1">
 					<!-- Navegacion -->
 					<div class="flex bg-navy">
-						<!-- Descripcion -->
+						<!-- Comentarios -->
 						<div class="px-4 py-3 text-chalky font-bold text-sm">
 							<svg class="inline w-8 h-8" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
 								<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3v4c0 .6-.4 1-1 1H5m4 8h6m-6-4h6m4-8v16c0 .6-.4 1-1 1H6a1 1 0 0 1-1-1V8c0-.4.1-.6.3-.8l4-4 .6-.2H18c.6 0 1 .4 1 1Z"></path>
 							</svg>
-							<span>Descripción</span>
+							<span>Comentarios</span>
 						</div>
-						<!-- Comentarios -->
 					</div>
-					<pre class="overflow-x-auto p-4">
-						{ item.LongDescription }
-					</pre>
+					<pre class="overflow-x-auto p-4"></pre>
 				</div>
-				<!-- Productos relacionados -->
 			</div>
 		</main>
 	}
