@@ -113,5 +113,10 @@ func (h *Handler) HandleStoreItemShow(c echo.Context) error {
 		return err
 	}
 
-	return util.Render(c, http.StatusOK, view.Item(item, products))
+	comments, err := h.CommentService.GetComments(item, config.COMMENT_PAGINATION, 1)
+	if err != nil {
+		return err
+	}
+
+	return util.Render(c, http.StatusOK, view.Item(item, products, comments))
 }

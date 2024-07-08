@@ -1,0 +1,135 @@
+package store
+
+import (
+	"alc/config"
+	"alc/model/auth"
+	"alc/model/store"
+	"fmt"
+	"path"
+	"time"
+)
+
+func GetTime(t time.Time) string {
+	loc, _ := time.LoadLocation("America/Lima")
+	locTime := t.In(loc)
+	return locTime.Format(time.DateTime)
+}
+
+templ Comment(item store.Item, comments []store.ItemComment, page int) {
+	<!-- Summary -->
+	<div>
+		if len(comments) == 0 {
+			<p class="text-center font-bold text-2xl text-azure">Vaya no hay comentarios!</p>
+			<p class="text-center text-livid">Se el primero en comentar</p>
+		}
+	</div>
+	<div class="mt-6 space-y-6">
+		<!-- New comment form -->
+		if user, ok := auth.GetUser(ctx); ok {
+			<form
+				class="px-3 py-6 space-y-3 border border-livid rounded-2xl"
+				action={ templ.URL(path.Join("/store/categories/", item.Category.Slug, "/items/", item.Slug, "comments")) }
+				method="post"
+				autocomplete="off"
+				hx-post={ string(templ.URL(path.Join("/store/categories/", item.Category.Slug, "/items/", item.Slug, "comments"))) }
+				hx-indicator="#comment-indicator"
+				hx-target="#comment-section"
+			>
+				<div class="flex gap-3 items-center">
+					<h2 class="font-semibold text-2xl text-navy">Nuevo comentario</h2>
+					<img id="comment-indicator" class="htmx-indicator w-6" src="/static/img/bars.svg"/>
+				</div>
+				<div class="flex gap-6">
+					<div class="flex-1">
+						<input class="block p-2 w-full border rounded-lg border-slate-500" placeholder="Título" type="text" name="title" required/>
+					</div>
+					<div>
+						<input id="comment-rating" class="inline text-center w-32 p-2 border rounded-lg border-slate-500" placeholder="Rating [1-5]" type="number" min="1" max="5" name="rating" required/>
+					</div>
+				</div>
+				<div>
+					<textarea class="block p-2 w-full border rounded-lg border-slate-500 resize-none" rows="3" placeholder="Mensaje" name="message" required></textarea>
+				</div>
+				<div class="flex items-center">
+					<div class="text-livid">{ "Registrado como: " + user.Email } </div>
+					<button class="ml-auto w-[50%] p-2 border bg-azure border-azure rounded-3xl font-semibold text-chalky" type="submit">Enviar</button>
+				</div>
+			</form>
+		} else {
+			<p class="text-center">
+				Debe 
+				<a
+					class="font-bold text-azure"
+					href={ templ.URL("/login?to=" + path.Join("/store/categories/", item.Category.Slug, "/items/", item.Slug)) }
+				>logearse</a> para poder comentar
+			</p>
+		}
+		if len(comments) != 0 {
+			<!-- Navigation buttons -->
+			<div class="flex justify-center gap-3">
+				@CommentNavigation(item, comments, page)
+			</div>
+			<!-- Comments -->
+			<div class="space-y-6">
+				for n, comment := range comments {
+					if n <= config.COMMENT_PAGINATION - 1 {
+						<div class="p-3 space-y-3 border border-livid rounded-2xl">
+							<!-- Comment header -->
+							<div class="flex gap-6">
+								<div class="font-semibold text-navy">{ comment.Title }</div>
+								<div class="text-livid">{ GetTime(comment.CreatedAt) }</div>
+								<div class="ml-auto">{ fmt.Sprintf("%d estrellas", comment.Rating) }</div>
+							</div>
+							<!-- Comment body -->
+							<pre class="min-h-12">
+								{ comment.Message }
+							</pre>
+							<!-- Comment footer -->
+							<div class="flex gap-6">
+								<div class="ml-auto text-livid">{ "Comentado por: " + comment.CommentedBy.Name }</div>
+							</div>
+						</div>
+					}
+				}
+			</div>
+			<!-- Navigation buttons -->
+			<div class="flex justify-center gap-3">
+				@CommentNavigation(item, comments, page)
+			</div>
+		}
+	</div>
+}
+
+templ CommentNavigation(item store.Item, comments []store.ItemComment, page int) {
+	<div
+		if page < 2 {
+			class="text-livid pointer-events-none"
+		} else {
+			class="text-azure cursor-pointer"
+			hx-get={ string(templ.SafeURL(path.Join("/store/categories/", item.Category.Slug, "/items/", item.Slug, fmt.Sprintf("/comments?p=%d", page-1)))) }
+			hx-target="#comment-section"
+		}
+	>
+		<svg class="w-10 h-10" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+			<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 16.9V7a1 1 0 0 0-1.6-.8l-6 5a1 1 0 0 0 0 1.5l6 4.9a1 1 0 0 0 1.6-.8Z"></path>
+		</svg>
+	</div>
+	<span class="flex justify-center items-center w-10 aspect-square rounded-full bg-navy">
+		<div class="text-chalky font-bold">
+			{ fmt.Sprintf("%d", page) }
+		</div>
+	</span>
+	<div
+		if len(comments) < config.COMMENT_PAGINATION + 1 {
+			class="text-livid pointer-events-none"
+		} else {
+			class="text-azure cursor-pointer"
+			hx-get={ string(templ.SafeURL(path.Join("/store/categories/", item.Category.Slug, "/items/", item.Slug, fmt.Sprintf("/comments?p=%d", page+1)))) }
+			hx-target="#comment-section"
+		}
+	>
+		<svg class="w-10 h-10" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+			<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16.9V7a1 1 0 0 1 1.6-.8l6 5a1 1 0 0 1 0 1.5l-6 4.9a1 1 0 0 1-1.6-.8Z"></path>
+		</svg>
+	</div>
+}

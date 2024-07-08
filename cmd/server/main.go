@@ -60,12 +60,14 @@ func main() {
 	as := service.NewAdminService(ps)
 	ms := service.NewEmailService(client)
 	us := service.NewAuthService(dbpool)
+	cs := service.NewCommentService(dbpool)
 
 	// Initialize handlers
 	ph := public.Handler{
-		PublicService: ps,
-		EmailService:  ms,
-		AuthService:   us,
+		PublicService:  ps,
+		EmailService:   ms,
+		AuthService:    us,
+		CommentService: cs,
 	}
 
 	ah := admin.Handler{
@@ -117,6 +119,8 @@ func main() {
 	g2.GET("/categories/all/items", ph.HandleStoreAllItemsShow)
 	g2.GET("/categories/:categorySlug/items", ph.HandleStoreCategoryItemsShow)
 	g2.GET("/categories/:categorySlug/items/:itemSlug", ph.HandleStoreItemShow)
+	g2.GET("/categories/:categorySlug/items/:itemSlug/comments", ph.HandleCommentsShow)
+	g2.POST("/categories/:categorySlug/items/:itemSlug/comments", ph.HandleCommentInsertion)
 
 	// Cart group
 	g4 := e.Group("/cart")

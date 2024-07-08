@@ -21,7 +21,7 @@ script HandleProductChange() {
 	productSelect.addEventListener("change", handler);
 }
 
-templ Item(item store.Item, products []store.Product) {
+templ Item(item store.Item, products []store.Product, comments []store.ItemComment) {
 	@layout.BasePage(item.Name) {
 		<main>
 			<div class="grid gap-9 px-4 py-9 max-w-7xl mx-auto lg:grid-cols-[3fr_2fr] lg:gap-12">
@@ -137,7 +137,9 @@ templ Item(item store.Item, products []store.Product) {
 							<span>Comentarios</span>
 						</div>
 					</div>
-					<pre class="overflow-x-auto p-4"></pre>
+					<div id="comment-section" class="p-6">
+						@Comment(item, comments, 1)
+					</div>
 				</div>
 			</div>
 		</main>

@@ -1,7 +1,7 @@
 package config
 
 const (
-	PAGINATION            int = 3
-	COMMENT_PAGINATION    int = 6
+	PAGINATION            int = 9
+	COMMENT_PAGINATION    int = 3
 	SUBCOMMENT_PAGINATION int = 3
 )
