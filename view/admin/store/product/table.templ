@@ -1,9 +1,9 @@
 package product 
 
 import (
+	"alc/model/store"
 	"fmt"
 	"path"
-	"alc/model/store"
 )
 
 templ Table(item store.Item, products []store.Product) {
@@ -21,7 +21,7 @@ templ Table(item store.Item, products []store.Product) {
 			for _, p := range products {
 				<tr class="border-b border-black">
 					<td>{ p.Name }</td>
-					<td>{ fmt.Sprintf("US$%.2f", float64(p.Price)/100.0) }</td>
+					<td>{ fmt.Sprintf("PEN%.2f", float64(p.Price)/100.0) }</td>
 					if p.Stock != nil {
 						<td>{ fmt.Sprintf("%d", *p.Stock) }</td>
 					} else {

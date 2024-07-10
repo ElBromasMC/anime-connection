@@ -1,0 +1,71 @@
+package page
+
+import "alc/view/layout"
+
+templ Contacto() {
+	@layout.BasePage("Contacto") {
+		<main class="min-h-dvh px-4 py-16 max-w-7xl mx-auto space-y-6 lg:py-24">
+			<section class="flex flex-col items-center">
+				<h2 class="font-bold text-3xl">Contacto</h2>
+				<form
+					class="grid w-full mt-3 gap-y-3 lg:w-[60%]"
+					action=""
+					method=""
+					enctype="multipart/form-data"
+					autocomplete="off"
+				>
+					<div>
+						<label class="font-bold" for="form-name">Nombre</label>
+						<input
+							class="px-2 py-1 block w-full border border-livid"
+							type="text"
+							placeholder="Introduzca su nombre completo"
+							name="name"
+							id="form-name"
+							required
+						/>
+					</div>
+					<div>
+						<label class="font-bold" for="form-email">Email</label>
+						<input
+							class="px-2 py-1 block w-full border border-livid"
+							type="email"
+							placeholder="Introduzca su email"
+							name="email"
+							id="form-email"
+							required
+						/>
+					</div>
+					<div>
+						<label class="font-bold" for="form-topic">Motivo</label>
+						<select
+							class="px-2 py-1 block w-full border border-livid"
+							type="text"
+							placeholder="Motivo de consulta"
+							name="topic"
+							id="form-topic"
+							required
+						>
+							<option value="verification">Verificación de Seller</option>
+							<option value="buyerror">Error en la compra</option>
+						</select>
+					</div>
+					<div>
+						<label class="font-bold" for="form-message">Mensaje</label>
+						<textarea
+							rows="3"
+							class="resize-none px-2 py-1 block w-full border border-livid"
+							placeholder="Describa su mensaje"
+							name="message"
+							id="form-message"
+							required
+						></textarea>
+					</div>
+					<div class="flex gap-6 !mt-3">
+						<button class="flex-1 p-3 text-white font-bold bg-navy" type="submit">Enviar</button>
+					</div>
+				</form>
+			</section>
+		</main>
+	}
+}

@@ -65,7 +65,7 @@ templ Item(item store.Item, products []store.Product, comments []store.ItemComme
 					<p>{ item.Description }</p>
 					<p id="store:price" class="text-3xl font-semibold text-azure">
 						if len(products) >= 1 {
-							{ fmt.Sprintf("US$ %.2f", float64(products[0].Price)/100.0) }
+							{ fmt.Sprintf("PEN %.2f", float64(products[0].Price)/100.0) }
 						} else {
 							No disponible!
 						}
@@ -109,7 +109,7 @@ templ Item(item store.Item, products []store.Product, comments []store.ItemComme
 								for _, p := range products {
 									<option
 										value={ fmt.Sprintf("%d", p.Id) }
-										data-price={ fmt.Sprintf("US$ %.2f", float64(p.Price)/100.0) }
+										data-price={ fmt.Sprintf("PEN %.2f", float64(p.Price)/100.0) }
 										if p.Stock != nil {
 											data-stock={ fmt.Sprintf("%d unidades disponibles", *p.Stock) }
 										}

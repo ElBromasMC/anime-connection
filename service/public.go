@@ -237,6 +237,40 @@ ORDER BY si.id DESC`, cat.Id)
 	return items, nil
 }
 
+func (ps Public) GetLatestItems(n int) ([]store.Item, error) {
+	sql := `SELECT si.id, si.name, si.slug, img.id, img.filename, sc.slug
+	FROM store_items AS si
+	JOIN store_categories AS sc
+	ON si.category_id = sc.id
+	LEFT JOIN images AS img
+	ON si.img_id = img.id
+	ORDER BY si.created_at DESC
+	LIMIT $1`
+
+	rows, err := ps.DB.Query(context.Background(), sql, n)
+	if err != nil {
+		return []store.Item{}, echo.NewHTTPError(http.StatusInternalServerError)
+	}
+	defer rows.Close()
+
+	items, err := pgx.CollectRows(rows, func(row pgx.CollectableRow) (store.Item, error) {
+		var item store.Item
+		var imgId *int
+		var imgFilename *string
+		err := row.Scan(&item.Id, &item.Name, &item.Slug, &imgId, &imgFilename, &item.Category.Slug)
+		if imgId != nil {
+			item.Img.Id = *imgId
+			item.Img.Filename = *imgFilename
+		}
+		return item, err
+	})
+	if err != nil {
+		return []store.Item{}, echo.NewHTTPError(http.StatusInternalServerError)
+	}
+
+	return items, nil
+}
+
 // Check
 func (ps Public) GetItem(cat store.Category, slug string) (store.Item, error) {
 	var item store.Item

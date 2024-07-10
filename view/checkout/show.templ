@@ -1,15 +1,15 @@
 package checkout
 
 import (
-	"fmt"
-	"path"
 	"alc/config"
 	"alc/model/cart"
 	"alc/view/layout"
+	"fmt"
+	"path"
 )
 
 func ToUSD(value int) string {
-	return fmt.Sprintf("US$ %.2f", float64(value)/100.0)
+	return fmt.Sprintf("PEN %.2f", float64(value)/100.0)
 }
 
 func TotalProducts(items []cart.Item) int {

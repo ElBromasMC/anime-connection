@@ -1,9 +1,9 @@
 package product 
 
 import (
+	"alc/model/store"
 	"fmt"
 	"path"
-	"alc/model/store"
 )
 
 templ InsertionForm(item store.Item) {
@@ -22,7 +22,7 @@ templ InsertionForm(item store.Item) {
 		</div>
 		<div>
 			<label>Precio:</label>
-			<input class="block w-full border border-livid" placeholder="US$" type="number" min="0" step="0.01" name="price" required/>
+			<input class="block w-full border border-livid" placeholder="PEN" type="number" min="0" step="0.01" name="price" required/>
 		</div>
 		<div>
 			<label>Stock:</label>
@@ -50,7 +50,7 @@ templ UpdateForm(product store.Product) {
 		</div>
 		<div>
 			<label>Precio:</label>
-			<input class="block w-full border border-livid" placeholder="US$" type="number" min="0" step="0.01" name="price" value={ fmt.Sprintf("%.2f", float64(product.Price)/100.0) } required/>
+			<input class="block w-full border border-livid" placeholder="PEN" type="number" min="0" step="0.01" name="price" value={ fmt.Sprintf("%.2f", float64(product.Price)/100.0) } required/>
 		</div>
 		<div class="flex gap-6 !mt-3">
 			<button class="font-bold text-azure" type="submit">Actualizar</button>

@@ -100,6 +100,8 @@ func main() {
 
 	// Page routes
 	e.GET("/", ph.HandleIndexShow, authMiddleware, cartMiddleware)
+	e.GET("/nosotros", ph.HandleNosotrosShow, authMiddleware, cartMiddleware)
+	e.GET("/contacto", ph.HandleContactoShow, authMiddleware, cartMiddleware)
 
 	// Auth routes
 	e.GET("/login", ph.HandleLoginShow)

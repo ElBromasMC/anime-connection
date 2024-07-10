@@ -25,7 +25,7 @@ func HTTPErrorHandler(err error, c echo.Context) {
 			}
 		}
 	default:
-		if err := c.String(http.StatusInternalServerError, "500 - Internal Server Error"); err != nil {
+		if err := c.String(http.StatusInternalServerError, "Internal Server Error"); err != nil {
 			c.Logger().Error(err)
 		}
 	}

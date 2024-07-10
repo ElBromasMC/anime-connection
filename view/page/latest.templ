@@ -1,0 +1,38 @@
+package page
+
+import (
+	"alc/config"
+	"alc/model/store"
+	"path"
+)
+
+templ Latest(items []store.Item) {
+	<section>
+		<div class="px-4 py-16 max-w-7xl mx-auto space-y-6 lg:py-24">
+			<div class="flex items-center gap-2">
+				<svg class="w-12 h-12 text-navy" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+					<path fill="currentColor" d="M16 18H8l2.5-6 2 4 1.5-2 2 4Zm-1-8.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z"></path>
+					<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m14-4v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1ZM8 18h8l-2-4-1.5 2-2-4L8 18Zm7-8.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z"></path>
+				</svg>
+				<h3 class="font-semibold text-lg lg:text-2xl">Últimos mangas agregados</h3>
+				<a class="ml-auto p-2 rounded text-center text-white font-bold bg-azure lg:px-4 lg:py-2" href="/store/categories/all">
+					Ver más
+				</a>
+			</div>
+			<ul class="grid grid-cols-[repeat(auto-fit,minmax(15rem,1fr))] gap-16">
+				for _, i := range items {
+					<li class="flex items-center justify-center">
+						<a class="flex flex-col items-center gap-4" href={ templ.URL(path.Join("/store/categories", i.Category.Slug, "items", i.Slug)) }>
+							if i.Img.Id != 0 {
+								<img class="w-44 aspect-square object-cover rounded-xl shadow-[rgba(0,0,0,0.24)_0px_3px_8px]" src={ path.Join(config.IMAGES_PATH, i.Img.Filename) } alt={ i.Slug }/>
+							} else {
+								<img class="w-44 aspect-square object-cover rounded-xl shadow-[rgba(0,0,0,0.24)_0px_3px_8px]" src="/static/img/noimage.png" alt={ i.Slug }/>
+							}
+							<h3 class="font-bold text-xl text-center">{ i.Name }</h3>
+						</a>
+					</li>
+				}
+			</ul>
+		</div>
+	</section>
+}
